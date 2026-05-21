@@ -26,7 +26,7 @@ Changes from stock:
 - Suppresses extra non-motion A1 notifications so the ring does not waste BLE
   airtime while raw motion is active.
 - Keeps the raw `a1 03` packets intact, so the website can decode the same
-  X/Y/Z packet shape across catalog firmware.
+  X/Y/Z packet shape across catalogue firmware.
 - Suppresses one connection-parameter update path that otherwise made desktop
   browser streaming less stable.
 
@@ -71,7 +71,7 @@ This is the RT02CR version of the low-latency firmware.
 
 Changes from stock:
 
-- Uses the same low-latency raw motion behavior as the RT02R build.
+- Uses the same low-latency raw motion behaviour as the RT02R build.
 - Keeps RT02CR runtime identity strings, so Device Information reports the ring
   as RT02CR after flashing.
 - Keeps the same `A10404` raw-on command and strict `a1 03` motion packet
@@ -102,9 +102,9 @@ Byte-level summary:
 This is an unmodified vendor RT02R firmware image included for restore and
 comparison.
 
-Behavior:
+Behaviour:
 
-- Keeps normal stock ring behavior.
+- Keeps normal stock ring behaviour.
 - Does not include the low-latency raw motion changes.
 - Raw motion remains much slower than the low-latency firmware.
 
@@ -123,7 +123,7 @@ Reference bytes retained from stock:
 This is a known-good RT02R recovery image for rings that still connect over BLE
 but need to be moved back to a stable firmware.
 
-Behavior:
+Behaviour:
 
 - Uses recovery OTA init mode.
 - Uses the same 240-byte BLE transfer slicing as the web flasher.
@@ -173,7 +173,7 @@ response, nonzero DFU status, timeout, or disconnect.
 
 One firmware area worth avoiding is file offset `0x007ed4`. Testing showed it
 affects incoming OTA frame reassembly timing rather than raw motion cadence.
-Changing it can make later OTA recovery harder, so the public firmware catalog
+Changing it can make later OTA recovery harder, so the public firmware catalogue
 does not include builds that patch it.
 
 ## BLE Commands Used by the Site

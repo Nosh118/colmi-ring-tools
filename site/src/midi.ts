@@ -28,7 +28,7 @@ export class MidiController {
   private smoothed: MidiValues = { ...DEFAULT_VALUES };
   private lastSentAt = 0;
 
-  async initialize(): Promise<MIDIOutput[]> {
+  async initialise(): Promise<MIDIOutput[]> {
     if (!navigator.requestMIDIAccess) {
       throw new Error("Web MIDI is not available in this browser.");
     }

@@ -5,7 +5,7 @@ conventional security issue is involved.
 
 Please report privately before public disclosure if you find:
 
-- a way for the flasher to bypass catalog hash checks
+- a way for the flasher to bypass catalogue hash checks
 - an included firmware image that targets the wrong hardware
 - a regression that can brick a ring or break future recovery
 - accidental release of private captures, keys, APKs, SDKs, or unrelated files

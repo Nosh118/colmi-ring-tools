@@ -27,7 +27,7 @@ const CUSTOM_CONFIRM_TEXT = "CUSTOM FIRMWARE";
 const CUSTOM_MIN_BATTERY_PERCENT = 20;
 
 interface LoadedFirmware {
-  source: "catalog" | "custom";
+  source: "catalogue" | "custom";
   label: string;
   fileName: string;
   bytes: Uint8Array;
@@ -107,9 +107,9 @@ const ui = {
   docContent: byId<HTMLElement>("docContent"),
 };
 
-void initialize();
+void initialise();
 
-async function initialize(): Promise<void> {
+async function initialise(): Promise<void> {
   wireUi();
   renderMidiChannels();
   renderDocTabs();
@@ -121,7 +121,7 @@ async function initialize(): Promise<void> {
     setStatus("Disconnected");
     renderConnection();
   });
-  await refreshFirmwareCatalog();
+  await refreshFirmwareCatalogue();
   await refreshMidiOutputs();
   await selectDoc(DOC_PAGES[0]);
   setStatus("Ready");
@@ -131,7 +131,7 @@ function wireUi(): void {
   ui.connectButton.addEventListener("click", () => void connectRing());
   ui.disconnectButton.addEventListener("click", () => void disconnectRing());
   ui.tabs.forEach((tab) => tab.addEventListener("click", () => selectTab(tab.dataset.tab ?? "flash")));
-  ui.refreshFirmwareButton.addEventListener("click", () => void refreshFirmwareCatalog());
+  ui.refreshFirmwareButton.addEventListener("click", () => void refreshFirmwareCatalogue());
   ui.firmwareSelect.addEventListener("change", () => selectFirmware(ui.firmwareSelect.value));
   ui.customFirmwareInput.addEventListener("change", () => void loadCustomFirmware());
   ui.customInitTypeSelect.addEventListener("change", () => void loadCustomFirmware());
@@ -176,7 +176,7 @@ async function disconnectRing(): Promise<void> {
   renderConnection();
 }
 
-async function refreshFirmwareCatalog(): Promise<void> {
+async function refreshFirmwareCatalogue(): Promise<void> {
   try {
     manifest = await loadFirmwareManifest();
     renderFirmwareOptions();
@@ -234,7 +234,7 @@ async function loadSelectedFirmware(): Promise<void> {
     const bytes = new Uint8Array(await response.arrayBuffer());
     await verifyFirmwareBytes(selectedFirmware, bytes);
     loadedFirmware = {
-      source: "catalog",
+      source: "catalogue",
       label: selectedFirmware.label,
       fileName: selectedFirmware.fileName,
       bytes,
@@ -371,7 +371,7 @@ function waitForDfuResponse(expectedCommand: number, timeoutMs: number): Promise
 async function refreshMidiOutputs(): Promise<void> {
   ui.midiOutputSelect.replaceChildren();
   try {
-    const outputs = await midi.initialize();
+    const outputs = await midi.initialise();
     if (outputs.length === 0) {
       ui.midiOutputSelect.append(new Option("No MIDI outputs", ""));
       return;
@@ -517,7 +517,7 @@ function renderConnection(): void {
 }
 
 function renderCompatibility(): string {
-  if (!manifest) return "Firmware catalog not loaded.";
+  if (!manifest) return "Firmware catalogue not loaded.";
   const compatible = manifest.firmware.filter((entry) => profileAcceptsDevice(entry, deviceInfo));
   if (!deviceInfo.hardware) return "Connect a ring to see compatible firmware.";
   if (compatible.length === 0) {

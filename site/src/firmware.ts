@@ -35,14 +35,14 @@ export interface DeviceInfoLike {
 }
 
 export function profileAcceptsDevice(entry: FirmwareEntry, device: DeviceInfoLike): boolean {
-  const hardware = normalize(device.hardware);
-  const firmware = normalize(device.firmware);
+  const hardware = normalise(device.hardware);
+  const firmware = normalise(device.firmware);
   if (!hardware || !firmware) return false;
 
-  const hardwareOk = entry.compatibleCurrentHardware.map(normalize).includes(hardware);
+  const hardwareOk = entry.compatibleCurrentHardware.map(normalise).includes(hardware);
   const firmwareOk =
-    entry.compatibleCurrentFirmware.map(normalize).includes(firmware) ||
-    entry.compatibleCurrentFirmwarePrefixes.some((prefix) => firmware.startsWith(normalize(prefix)));
+    entry.compatibleCurrentFirmware.map(normalise).includes(firmware) ||
+    entry.compatibleCurrentFirmwarePrefixes.some((prefix) => firmware.startsWith(normalise(prefix)));
 
   return hardwareOk && firmwareOk;
 }
@@ -56,7 +56,7 @@ export function compatibilityReason(entry: FirmwareEntry, device: DeviceInfoLike
   ].join(" or ")}.`;
 }
 
-export function normalize(value: string | undefined): string {
+export function normalise(value: string | undefined): string {
   return (value ?? "").trim();
 }
 

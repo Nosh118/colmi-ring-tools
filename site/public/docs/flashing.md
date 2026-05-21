@@ -9,17 +9,17 @@ the hosted site provides.
 2. Close any other app connected to the ring.
 3. Connect the ring in the site.
 4. Check Device Information.
-5. Choose a matching catalog firmware, or upload your own `.bin` file.
+5. Choose a matching catalogue firmware, or upload your own `.bin` file.
 6. Load the firmware and type the confirmation text shown by the site.
 
-## Catalog Firmware
+## Catalogue Firmware
 
 - `rt02r-low-latency.bin`: recommended RT02R firmware for faster raw motion.
 - `rt02cr-low-latency.bin`: recommended RT02CR firmware for faster raw motion.
 - `rt02r-stock-restore.bin`: stock RT02R restore image.
 - `rt02r-recovery.bin`: RT02R recovery image for rings that still connect.
 
-Catalog files are checked against the manifest before flashing.
+Catalogue files are checked against the manifest before flashing.
 
 ## Custom Firmware Uploads
 

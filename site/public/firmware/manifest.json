@@ -61,7 +61,7 @@
       "initType": 4,
       "minBatteryPercent": 20,
       "gateText": "STOCK RESTORE",
-      "patchSummary": "Restores stock RT02R behavior. Raw motion is slower than the low-latency firmware.",
+      "patchSummary": "Restores stock RT02R behaviour. Raw motion is slower than the low-latency firmware.",
       "publicDefault": false
     },
     {
