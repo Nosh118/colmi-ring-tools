@@ -12,7 +12,7 @@ No claim is made that vendor firmware bytes are open-source. If you redistribute
 this repository, preserve this file and the firmware manifest.
 
 The public repo intentionally excludes APKs, SDK archives, decompiled app
-output, private captures, generated build output, and development-only firmware.
+output, unpublished captures, generated build output, and development-only firmware.
 
 If a rights holder asks for a firmware artefact to be removed, remove the binary
 and keep a minimal hash/provenance record where legally appropriate.

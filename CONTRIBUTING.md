@@ -7,7 +7,7 @@ Keep this repo small and practical.
 - Add only firmware that has a clear end-user purpose.
 - Every catalogue binary needs size, SHA-256, CRC16, checksum16, target device,
   init type, and battery threshold in `site/public/firmware/manifest.json`.
-- Do not add APKs, SDK archives, private captures, decompiled app trees, or
+- Do not add APKs, SDK archives, unpublished captures, decompiled app trees, or
   generated build output.
 - Do not add experimental firmware that weakens OTA recovery.
 

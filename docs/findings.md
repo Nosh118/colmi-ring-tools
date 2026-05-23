@@ -191,7 +191,7 @@ values. The diagnostics panel displays the decoded acceleration in g, the raw
 12-bit axis values, and the vector magnitude.
 
 The realtime sensor kinds used by the diagnostics panel follow the QRing data
-request shape seen in the private research tooling:
+request shape:
 
 - `1`: heart rate, displayed as bpm.
 - `3`: blood oxygen, displayed as SpO2 percentage.
