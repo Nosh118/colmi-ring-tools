@@ -180,8 +180,19 @@ does not include builds that patch it.
 
 - `A10404`: raw motion on
 - `A102`: raw motion off
-- `03`: battery check
-- `69` / `6a`: stop active realtime sensor streams
+- `03`: battery check. Responses use `03`, battery percentage, charging flag.
+- `69`: realtime sensor data request and response. Requests use sensor kind and
+  action (`1` start, `4` stop). Responses use byte 1 as sensor kind, byte 2 as
+  error code, and byte 3 as the current value.
+- `6a`: stop active realtime sensor streams.
 
 Raw motion packets begin with `a1 03` and contain X, Y, and Z accelerometer
 values.
+
+The realtime sensor kinds used by the diagnostics panel follow the QRing data
+request shape seen in the private research tooling:
+
+- `1`: heart rate, displayed as bpm.
+- `3`: blood oxygen, displayed as SpO2 percentage.
+- `2`, `4`, `5`, `6`, `7`, `8`, `9`, `10`: shown as extra sensor values if the
+  ring sends them.

@@ -20,6 +20,7 @@ const CMD_DATA_REQUEST = 0x69;
 const CMD_STOP_REAL_TIME = 0x6a;
 const CMD_HEART_RATE_LOG_SETTINGS = 0x16;
 const CMD_BLOOD_OXYGEN_SETTINGS = 0x2c;
+const DATA_ACTION_START = 0x01;
 const DATA_ACTION_STOP = 0x04;
 const SUPPORTED_RING_NAME_PREFIXES = ["R02", "COLMI R02", "Colmi R02", "TR-R02"];
 
@@ -230,6 +231,23 @@ export class RingBleClient {
     await delay(120);
     const second = await this.writePacketToAll(packet, "Raw off pass 2");
     return Math.max(first, second);
+  }
+
+  async startRealtimeSensor(kind: number, label: string): Promise<number> {
+    return this.writePacketToAll(packetFromBytes([CMD_DATA_REQUEST, kind, DATA_ACTION_START]), `Start ${label}`);
+  }
+
+  async stopRealtimeSensor(kind: number, label: string): Promise<number> {
+    const dataStop = await this.writePacketToAll(
+      packetFromBytes([CMD_DATA_REQUEST, kind, DATA_ACTION_STOP]),
+      `Stop data ${label}`,
+    );
+    await delay(25);
+    const realtimeStop = await this.writePacketToAll(
+      packetFromBytes([CMD_STOP_REAL_TIME, kind, 0, 0]),
+      `Stop realtime ${label}`,
+    );
+    return dataStop + realtimeStop;
   }
 
   async quietOpticalSensors(): Promise<number> {

@@ -6,6 +6,7 @@ import {
   buildInitFrame,
   buildStartFrame,
   chunkCount,
+  bytesToHex,
   firmwareStats,
   parseDfuResponse,
   sha256Hex,
@@ -19,6 +20,13 @@ import {
   type FirmwareEntry,
   type FirmwareManifest,
 } from "./firmware";
+import {
+  BLOOD_OXYGEN_KIND,
+  HEART_RATE_KIND,
+  decodeSensorPacket,
+  formatSensorValue,
+  type SensorReading,
+} from "./health";
 import { decodeMotionPacket, MotionStats, type MotionReading } from "./motion";
 import { MidiController, type MidiMapping, type MidiValues } from "./midi";
 import { RingBleClient, type BatteryInfo, type ConnectionInfo, type DeviceInfo, type RingPacket } from "./ringBle";
@@ -51,6 +59,9 @@ let latestReading: MotionReading | null = null;
 let latestMidiValues: MidiValues = { x: 64, y: 64, z: 64 };
 let rawEnabled = false;
 const packetLog: Array<{ at: string; kind: string; detail: string }> = [];
+const latestSensorReadings = new Map<number, SensorReading>();
+const sensorReceivedAt = new Map<number, string>();
+const otherPackets: Array<{ at: string; command: string; hex: string }> = [];
 
 const ui = {
   connectButton: byId<HTMLButtonElement>("connectButton"),
@@ -100,6 +111,15 @@ const ui = {
   yMidiText: byId<HTMLElement>("yMidiText"),
   zMidiText: byId<HTMLElement>("zMidiText"),
   compatibilityPanel: byId<HTMLElement>("compatibilityPanel"),
+  heartRateButton: byId<HTMLButtonElement>("heartRateButton"),
+  bloodOxygenButton: byId<HTMLButtonElement>("bloodOxygenButton"),
+  stopSensorsButton: byId<HTMLButtonElement>("stopSensorsButton"),
+  heartRateText: byId<HTMLElement>("heartRateText"),
+  bloodOxygenText: byId<HTMLElement>("bloodOxygenText"),
+  heartRateMeta: byId<HTMLElement>("heartRateMeta"),
+  bloodOxygenMeta: byId<HTMLElement>("bloodOxygenMeta"),
+  extraSensorList: byId<HTMLElement>("extraSensorList"),
+  otherPacketList: byId<HTMLElement>("otherPacketList"),
   packetLog: byId<HTMLTextAreaElement>("packetLog"),
   exportDiagButton: byId<HTMLButtonElement>("exportDiagButton"),
   clearDiagButton: byId<HTMLButtonElement>("clearDiagButton"),
@@ -113,6 +133,8 @@ async function initialise(): Promise<void> {
   wireUi();
   renderMidiChannels();
   renderDocTabs();
+  renderSensorReadings();
+  renderOtherPackets();
   ble.onPacket(handlePacket);
   ble.onWrite((event) => appendPacketLog("write", `${event.label}: ${event.packetHex} (${event.status})`));
   ble.onDisconnect(() => {
@@ -147,9 +169,17 @@ function wireUi(): void {
   ui.rawOffButton.addEventListener("click", () => void rawOff());
   ui.quietSensorsButton.addEventListener("click", () => void quietSensors());
   ui.healthOffButton.addEventListener("click", () => void healthOff());
+  ui.heartRateButton.addEventListener("click", () => void startSensor(HEART_RATE_KIND, "heart rate"));
+  ui.bloodOxygenButton.addEventListener("click", () => void startSensor(BLOOD_OXYGEN_KIND, "blood oxygen"));
+  ui.stopSensorsButton.addEventListener("click", () => void stopSensors());
   ui.exportDiagButton.addEventListener("click", exportDiagnostics);
   ui.clearDiagButton.addEventListener("click", () => {
     packetLog.length = 0;
+    latestSensorReadings.clear();
+    sensorReceivedAt.clear();
+    otherPackets.length = 0;
+    renderSensorReadings();
+    renderOtherPackets();
     renderPacketLog();
   });
 }
@@ -423,6 +453,24 @@ async function healthOff(): Promise<void> {
   }
 }
 
+async function startSensor(kind: number, label: string): Promise<void> {
+  try {
+    const writes = await ble.startRealtimeSensor(kind, label);
+    setStatus(`Started ${label} (${writes} writes)`);
+  } catch (error) {
+    setStatus(errorMessage(error));
+  }
+}
+
+async function stopSensors(): Promise<void> {
+  try {
+    const writes = await ble.quietOpticalSensors();
+    setStatus(`Sensor streams stopped (${writes} writes)`);
+  } catch (error) {
+    setStatus(errorMessage(error));
+  }
+}
+
 function sendLearnCc(axis: string, input: HTMLInputElement): void {
   const sent = midi.sendSingleCc(Number(input.value), 127, Number(ui.midiChannelSelect.value));
   setStatus(sent ? `${axis} CC sent` : "Select a MIDI output first.");
@@ -441,6 +489,15 @@ function handlePacket(packet: RingPacket): void {
     }
     return;
   }
+  const sensor = decodeSensorPacket(packet);
+  if (sensor) {
+    latestSensorReadings.set(sensor.kind, sensor);
+    sensorReceivedAt.set(sensor.kind, new Date().toLocaleTimeString());
+    appendPacketLog("sensor", `${sensor.label}: ${formatSensorValue(sensor)} (${sensor.packetHex})`);
+    renderSensorReadings();
+    return;
+  }
+  recordOtherPacket(packet);
 }
 
 function currentMidiMapping(): MidiMapping {
@@ -506,6 +563,9 @@ function renderConnection(): void {
     ui.rawOffButton,
     ui.quietSensorsButton,
     ui.healthOffButton,
+    ui.heartRateButton,
+    ui.bloodOxygenButton,
+    ui.stopSensorsButton,
   ]) {
     button.disabled = !connected;
   }
@@ -514,6 +574,63 @@ function renderConnection(): void {
   ui.firmwareText.textContent = deviceInfo.firmware ?? "Unknown";
   ui.batteryText.textContent = batteryInfo ? `${batteryInfo.level}%${batteryInfo.charging ? " charging" : ""}` : "Unknown";
   ui.compatibilityPanel.innerHTML = renderCompatibility();
+}
+
+function renderSensorReadings(): void {
+  const heartRate = latestSensorReadings.get(HEART_RATE_KIND);
+  const bloodOxygen = latestSensorReadings.get(BLOOD_OXYGEN_KIND);
+  ui.heartRateText.textContent = formatSensorValue(heartRate);
+  ui.bloodOxygenText.textContent = formatSensorValue(bloodOxygen);
+  ui.heartRateMeta.textContent = sensorMeta(HEART_RATE_KIND, heartRate);
+  ui.bloodOxygenMeta.textContent = sensorMeta(BLOOD_OXYGEN_KIND, bloodOxygen);
+
+  const extras = [...latestSensorReadings.values()]
+    .filter((reading) => reading.kind !== HEART_RATE_KIND && reading.kind !== BLOOD_OXYGEN_KIND)
+    .sort((left, right) => left.kind - right.kind);
+  ui.extraSensorList.replaceChildren(...extras.map(sensorCard));
+}
+
+function sensorCard(reading: SensorReading): HTMLElement {
+  const item = document.createElement("div");
+  const label = document.createElement("span");
+  const value = document.createElement("strong");
+  const meta = document.createElement("small");
+  label.textContent = reading.label;
+  value.textContent = formatSensorValue(reading);
+  meta.textContent = sensorMeta(reading.kind, reading);
+  item.append(label, value, meta);
+  return item;
+}
+
+function sensorMeta(kind: number, reading: SensorReading | undefined): string {
+  if (!reading) return "Idle";
+  return `${sensorReceivedAt.get(kind) ?? "Now"} | kind ${kind}`;
+}
+
+function recordOtherPacket(packet: RingPacket): void {
+  const hex = bytesToHex(packet.bytes);
+  const command = `0x${packet.bytes[0]?.toString(16).padStart(2, "0") ?? "??"}`;
+  const at = new Date().toLocaleTimeString();
+  otherPackets.unshift({ at, command, hex });
+  if (otherPackets.length > 8) otherPackets.pop();
+  appendPacketLog("rx", `${command}: ${hex}`);
+  renderOtherPackets();
+}
+
+function renderOtherPackets(): void {
+  ui.otherPacketList.replaceChildren(
+    ...otherPackets.map((packet) => {
+      const item = document.createElement("div");
+      const label = document.createElement("span");
+      const value = document.createElement("strong");
+      const meta = document.createElement("small");
+      label.textContent = "Other packet";
+      value.textContent = packet.command;
+      meta.textContent = `${packet.at} | ${packet.hex}`;
+      item.append(label, value, meta);
+      return item;
+    }),
+  );
 }
 
 function renderCompatibility(): string {
@@ -567,6 +684,8 @@ function exportDiagnostics(): void {
     rawEnabled,
     latestReading,
     latestMidiValues,
+    sensorReadings: [...latestSensorReadings.values()],
+    otherPackets,
     packetLog,
   };
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });

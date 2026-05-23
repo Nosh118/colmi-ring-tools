@@ -252,6 +252,53 @@ dd {
   padding: 12px;
 }
 
+.sensor-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.sensor-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.sensor-grid div,
+.sensor-list div {
+  background: #f7f8fa;
+  border: 1px solid #d9dee7;
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  min-height: 82px;
+  padding: 12px;
+}
+
+.sensor-grid span,
+.sensor-list span {
+  color: #667185;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.sensor-grid strong,
+.sensor-list strong {
+  font-size: 22px;
+}
+
+.sensor-grid small,
+.sensor-list small {
+  color: #667185;
+  overflow-wrap: anywhere;
+}
+
+.sensor-list {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
 meter {
   inline-size: 100%;
 }

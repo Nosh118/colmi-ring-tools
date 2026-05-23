@@ -155,9 +155,28 @@
             <h2>Diagnostics</h2>
           </div>
           <div class="button-row">
+            <button id="heartRateButton" type="button" disabled>Start Heart Rate</button>
+            <button id="bloodOxygenButton" type="button" disabled>Start Blood Oxygen</button>
+            <button id="stopSensorsButton" type="button" disabled>Stop Sensors</button>
             <button id="exportDiagButton" type="button">Export JSON</button>
             <button id="clearDiagButton" type="button">Clear</button>
           </div>
+        </div>
+        <div class="details-panel sensor-panel">
+          <div class="sensor-grid" aria-label="live sensor readings">
+            <div>
+              <span>Heart rate</span>
+              <strong id="heartRateText">No data</strong>
+              <small id="heartRateMeta">Idle</small>
+            </div>
+            <div>
+              <span>Blood oxygen</span>
+              <strong id="bloodOxygenText">No data</strong>
+              <small id="bloodOxygenMeta">Idle</small>
+            </div>
+          </div>
+          <div id="extraSensorList" class="sensor-list" aria-label="extra sensor readings"></div>
+          <div id="otherPacketList" class="sensor-list" aria-label="other ring packets"></div>
         </div>
         <div id="compatibilityPanel" class="details-panel"></div>
         <textarea id="packetLog" class="log-box" readonly aria-label="packet log"></textarea>
