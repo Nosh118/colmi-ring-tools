@@ -21,6 +21,7 @@ const CMD_STOP_REAL_TIME = 0x6a;
 const CMD_HEART_RATE_LOG_SETTINGS = 0x16;
 const CMD_BLOOD_OXYGEN_SETTINGS = 0x2c;
 const DATA_ACTION_STOP = 0x04;
+const SUPPORTED_RING_NAME_PREFIXES = ["R02", "COLMI R02", "TR-R02"];
 
 export interface RingPacket {
   bytes: Uint8Array;
@@ -154,7 +155,7 @@ export class RingBleClient {
       throw new Error("Web Bluetooth is not available in this browser.");
     }
     const device = await navigator.bluetooth.requestDevice({
-      acceptAllDevices: true,
+      filters: SUPPORTED_RING_NAME_PREFIXES.map((namePrefix) => ({ namePrefix })),
       optionalServices: [UART_SERVICE_UUID, DFU_SERVICE_UUID, DEVICE_INFO_SERVICE_UUID, "device_information"],
     });
     if (!isSupportedRingName(device.name)) {

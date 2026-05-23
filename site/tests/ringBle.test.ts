@@ -7,6 +7,7 @@ describe("ring BLE device names", () => {
     expect(isSupportedRingName("R02_1234")).toBe(true);
     expect(isSupportedRingName("COLMI R02")).toBe(true);
     expect(isSupportedRingName("COLMI R02 1234")).toBe(true);
+    expect(isSupportedRingName("TR-R02")).toBe(true);
   });
 
   it("rejects non-R02 device names", () => {
