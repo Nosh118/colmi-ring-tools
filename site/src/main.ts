@@ -58,6 +58,7 @@ let batteryInfo: BatteryInfo | null = null;
 let latestReading: MotionReading | null = null;
 let latestMidiValues: MidiValues = { x: 64, y: 64, z: 64 };
 let rawEnabled = false;
+let motionReceivedAt: string | null = null;
 const packetLog: Array<{ at: string; kind: string; detail: string }> = [];
 const latestSensorReadings = new Map<number, SensorReading>();
 const sensorReceivedAt = new Map<number, string>();
@@ -118,6 +119,14 @@ const ui = {
   bloodOxygenText: byId<HTMLElement>("bloodOxygenText"),
   heartRateMeta: byId<HTMLElement>("heartRateMeta"),
   bloodOxygenMeta: byId<HTMLElement>("bloodOxygenMeta"),
+  accelXText: byId<HTMLElement>("accelXText"),
+  accelYText: byId<HTMLElement>("accelYText"),
+  accelZText: byId<HTMLElement>("accelZText"),
+  accelMagnitudeText: byId<HTMLElement>("accelMagnitudeText"),
+  accelXMeta: byId<HTMLElement>("accelXMeta"),
+  accelYMeta: byId<HTMLElement>("accelYMeta"),
+  accelZMeta: byId<HTMLElement>("accelZMeta"),
+  accelMagnitudeMeta: byId<HTMLElement>("accelMagnitudeMeta"),
   extraSensorList: byId<HTMLElement>("extraSensorList"),
   otherPacketList: byId<HTMLElement>("otherPacketList"),
   packetLog: byId<HTMLTextAreaElement>("packetLog"),
@@ -134,6 +143,7 @@ async function initialise(): Promise<void> {
   renderMidiChannels();
   renderDocTabs();
   renderSensorReadings();
+  renderAccelerationReading();
   renderOtherPackets();
   ble.onPacket(handlePacket);
   ble.onWrite((event) => appendPacketLog("write", `${event.label}: ${event.packetHex} (${event.status})`));
@@ -175,10 +185,13 @@ function wireUi(): void {
   ui.exportDiagButton.addEventListener("click", exportDiagnostics);
   ui.clearDiagButton.addEventListener("click", () => {
     packetLog.length = 0;
+    latestReading = null;
+    motionReceivedAt = null;
     latestSensorReadings.clear();
     sensorReceivedAt.clear();
     otherPackets.length = 0;
     renderSensorReadings();
+    renderAccelerationReading();
     renderOtherPackets();
     renderPacketLog();
   });
@@ -480,6 +493,7 @@ function handlePacket(packet: RingPacket): void {
   const motion = decodeMotionPacket(packet);
   if (motion) {
     latestReading = motion;
+    motionReceivedAt = new Date().toLocaleTimeString();
     const snapshot = stats.push(packet.timestamp);
     ui.rateText.textContent = `${snapshot.sampleRateHz} Hz`;
     const values = midi.sendMotion(motion, currentMidiMapping());
@@ -487,6 +501,7 @@ function handlePacket(packet: RingPacket): void {
       latestMidiValues = values;
       renderMidiValues(values);
     }
+    renderAccelerationReading();
     return;
   }
   const sensor = decodeSensorPacket(packet);
@@ -590,6 +605,17 @@ function renderSensorReadings(): void {
   ui.extraSensorList.replaceChildren(...extras.map(sensorCard));
 }
 
+function renderAccelerationReading(): void {
+  ui.accelXText.textContent = latestReading ? formatG(latestReading.g.x) : "No data";
+  ui.accelYText.textContent = latestReading ? formatG(latestReading.g.y) : "No data";
+  ui.accelZText.textContent = latestReading ? formatG(latestReading.g.z) : "No data";
+  ui.accelMagnitudeText.textContent = latestReading ? formatG(latestReading.magnitudeG) : "No data";
+  ui.accelXMeta.textContent = latestReading ? accelerationMeta("X", latestReading.raw.x) : "Idle";
+  ui.accelYMeta.textContent = latestReading ? accelerationMeta("Y", latestReading.raw.y) : "Idle";
+  ui.accelZMeta.textContent = latestReading ? accelerationMeta("Z", latestReading.raw.z) : "Idle";
+  ui.accelMagnitudeMeta.textContent = latestReading ? `${motionReceivedAt ?? "Now"} | vector length` : "Idle";
+}
+
 function sensorCard(reading: SensorReading): HTMLElement {
   const item = document.createElement("div");
   const label = document.createElement("span");
@@ -605,6 +631,14 @@ function sensorCard(reading: SensorReading): HTMLElement {
 function sensorMeta(kind: number, reading: SensorReading | undefined): string {
   if (!reading) return "Idle";
   return `${sensorReceivedAt.get(kind) ?? "Now"} | kind ${kind}`;
+}
+
+function accelerationMeta(axis: string, raw: number): string {
+  return `${motionReceivedAt ?? "Now"} | ${axis} raw ${raw}`;
+}
+
+function formatG(value: number): string {
+  return `${value.toFixed(2)} g`;
 }
 
 function recordOtherPacket(packet: RingPacket): void {

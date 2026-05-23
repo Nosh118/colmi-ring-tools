@@ -187,7 +187,8 @@ does not include builds that patch it.
 - `6a`: stop active realtime sensor streams.
 
 Raw motion packets begin with `a1 03` and contain X, Y, and Z accelerometer
-values.
+values. The diagnostics panel displays the decoded acceleration in g, the raw
+12-bit axis values, and the vector magnitude.
 
 The realtime sensor kinds used by the diagnostics panel follow the QRing data
 request shape seen in the private research tooling:
