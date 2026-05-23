@@ -154,9 +154,12 @@ export class RingBleClient {
       throw new Error("Web Bluetooth is not available in this browser.");
     }
     const device = await navigator.bluetooth.requestDevice({
-      filters: [{ namePrefix: "R02" }],
+      acceptAllDevices: true,
       optionalServices: [UART_SERVICE_UUID, DFU_SERVICE_UUID, DEVICE_INFO_SERVICE_UUID, "device_information"],
     });
+    if (!isSupportedRingName(device.name)) {
+      throw new Error(`Selected device is not an R02 ring: ${device.name ?? "unnamed device"}`);
+    }
     this.device = device;
     this.device.addEventListener("gattserverdisconnected", this.handleDisconnect);
     return this.connectSelectedDevice();
@@ -498,6 +501,10 @@ async function tryReadUtf8(service: BluetoothRemoteGATTService, characteristicUu
 
 function errorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
+}
+
+export function isSupportedRingName(name: string | undefined): boolean {
+  return (name ?? "").toUpperCase().includes("R02");
 }
 
 function delay(ms: number): Promise<void> {
