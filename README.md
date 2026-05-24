@@ -8,6 +8,10 @@ The site includes:
 - a motion-to-MIDI controller
 - basic ring diagnostics and JSON export
 
+This project builds on public Colmi/RF03 research and browser MIDI/BLE examples
+from others. See [Acknowledgements](docs/acknowledgements.md) for links and
+credits.
+
 Live site: https://nosh118.github.io/colmi-ring-tools/
 
 ## Supported Rings

@@ -8,6 +8,7 @@ export const DOC_PAGES: DocPage[] = [
   { id: "flashing", title: "Flashing", path: "./docs/flashing.md" },
   { id: "midi", title: "MIDI", path: "./docs/midi.md" },
   { id: "firmware", title: "Firmware", path: "./docs/findings.md" },
+  { id: "acknowledgements", title: "Thanks", path: "./docs/acknowledgements.md" },
 ];
 
 export async function fetchDocHtml(page: DocPage): Promise<string> {
@@ -100,7 +101,12 @@ export function markdownToHtml(markdown: string): string {
 }
 
 function inlineMarkdown(value: string): string {
-  return escapeHtml(value).replace(/`([^`]+)`/g, "<code>$1</code>");
+  return escapeHtml(value)
+    .replace(
+      /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',
+    )
+    .replace(/`([^`]+)`/g, "<code>$1</code>");
 }
 
 function escapeHtml(value: string): string {
