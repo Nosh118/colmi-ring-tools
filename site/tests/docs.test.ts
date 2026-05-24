@@ -1,9 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { DOC_PAGES, markdownToHtml } from "../src/docs";
+import { readFileSync } from "node:fs";
+import { DOC_PAGES } from "../src/docs";
 
 describe("docs rendering", () => {
-  it("keeps public docs backed by markdown files", () => {
+  it("keeps public docs backed by generated html and markdown files", () => {
     expect(DOC_PAGES.map((page) => page.path)).toEqual([
+      "./docs/flashing.html",
+      "./docs/midi.html",
+      "./docs/findings.html",
+      "./docs/acknowledgements.html",
+    ]);
+    expect(DOC_PAGES.map((page) => page.sourcePath)).toEqual([
       "./docs/flashing.md",
       "./docs/midi.md",
       "./docs/findings.md",
@@ -11,28 +18,25 @@ describe("docs rendering", () => {
     ]);
   });
 
-  it("renders basic markdown safely", () => {
-    const html = markdownToHtml("# Title\n\n- Use `code`\n- Escape <tags>");
-    expect(html).toContain("<h1>Title</h1>");
-    expect(html).toContain("<li>Use <code>code</code></li>");
-    expect(html).toContain("<li>Escape &lt;tags&gt;</li>");
-  });
-
-  it("keeps indented continuation lines inside list items", () => {
-    const html = markdownToHtml("- Firmware starts here\n  and wraps onto another line.\n- Next item");
-    expect(html.replace(/\s+/g, " ")).toContain("<li>Firmware starts here and wraps onto another line.</li>");
-    expect(html).toContain("<li>Next item</li>");
-  });
-
-  it("renders https links safely", () => {
-    expect(markdownToHtml("[Docs](https://example.com/ref)").trim()).toBe(
-      '<p><a href="https://example.com/ref" target="_blank" rel="noopener noreferrer">Docs</a></p>',
+  it("renders wrapped firmware list items at build time", () => {
+    const html = generatedDoc("findings");
+    expect(html.replace(/\s+/g, " ")).toContain(
+      "<li><code>rt02r-recovery.bin</code>: RT02R recovery image for rings that still connect over BLE.</li>",
     );
   });
 
-  it("renders fenced code blocks", () => {
-    expect(markdownToHtml("```\nRT02CR_3.12.07_260514\n```")).toContain(
-      "<pre><code>RT02CR_3.12.07_260514\n</code></pre>",
-    );
+  it("renders external links safely at build time", () => {
+    const html = generatedDoc("acknowledgements");
+    expect(html).toContain('href="https://github.com/atc1441/ATC_RF03_Ring"');
+    expect(html).toContain('target="_blank" rel="noopener noreferrer"');
+  });
+
+  it("keeps long firmware strings inside code elements", () => {
+    const html = generatedDoc("findings");
+    expect(html).toContain("<code>RT02CR_3.12.07_260514</code>");
   });
 });
+
+function generatedDoc(name: string): string {
+  return readFileSync(new URL(`../public/docs/${name}.html`, import.meta.url), "utf8");
+}
