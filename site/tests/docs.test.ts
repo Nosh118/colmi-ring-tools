@@ -3,7 +3,15 @@ import { DOC_PAGES, docHtml } from "../src/docs";
 
 describe("docs rendering", () => {
   it("keeps docs available as generated html in the app bundle", () => {
-    expect(DOC_PAGES.map((page) => page.id)).toEqual(["flashing", "midi", "findings", "acknowledgements"]);
+    expect(DOC_PAGES.map((page) => page.id)).toEqual([
+      "flashing",
+      "midi",
+      "findings",
+      "protocol",
+      "research",
+      "examples",
+      "acknowledgements",
+    ]);
     expect(DOC_PAGES.every((page) => page.html.includes("<h1"))).toBe(true);
   });
 
@@ -23,6 +31,13 @@ describe("docs rendering", () => {
   it("keeps long firmware strings inside code elements", () => {
     const html = generatedDoc("findings");
     expect(html).toContain("<code>RT02CR_3.12.07_260514</code>");
+  });
+
+  it("includes public research notes without private artefact paths", () => {
+    const html = generatedDoc("research");
+    expect(html).toContain("Firmware Container");
+    expect(html).not.toContain("research/tmp");
+    expect(html).not.toContain("agent-handoff");
   });
 });
 

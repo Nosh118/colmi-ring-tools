@@ -30,6 +30,17 @@ The public catalogue contains four files:
 You can also upload your own `.bin` file in the flasher. Uploaded files are not
 checked against the public catalogue, so only flash files you trust and understand.
 
+## Documentation
+
+The `docs/` folder and the hosted Docs tab include:
+
+- flashing and MIDI setup guides
+- byte-level firmware patch notes
+- BLE command and DFU protocol notes
+- OTA firmware discovery notes
+- small sanitised packet examples
+- release and contribution notes for maintainers
+
 ## Safety
 
 Firmware flashing can brick a ring. Charge the ring first, keep it close to the

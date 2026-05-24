@@ -13,6 +13,9 @@ const DOCS = [
   { source: "flashing.md", output: "flashing", title: "Flashing" },
   { source: "midi.md", output: "midi", title: "MIDI" },
   { source: "findings.md", output: "findings", title: "Firmware" },
+  { source: "protocol.md", output: "protocol", title: "Protocol" },
+  { source: "research.md", output: "research", title: "Research" },
+  { source: "examples.md", output: "examples", title: "Examples" },
   { source: "acknowledgements.md", output: "acknowledgements", title: "Thanks" },
 ];
 
