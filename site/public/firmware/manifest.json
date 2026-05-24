@@ -22,6 +22,8 @@
       "minBatteryPercent": 20,
       "gateText": "RT02R LOW LATENCY",
       "patchSummary": "Improves raw motion streaming for smoother MIDI control. Use this for RT02R rings.",
+      "docPageId": "findings",
+      "docAnchorId": "rt02r-low-latency-firmware",
       "publicDefault": true
     },
     {
@@ -42,6 +44,8 @@
       "minBatteryPercent": 20,
       "gateText": "RT02CR LOW LATENCY",
       "patchSummary": "Improves raw motion streaming for smoother MIDI control. Use this for RT02CR rings.",
+      "docPageId": "findings",
+      "docAnchorId": "rt02cr-low-latency-firmware",
       "publicDefault": true
     },
     {
@@ -62,6 +66,8 @@
       "minBatteryPercent": 20,
       "gateText": "STOCK RESTORE",
       "patchSummary": "Restores stock RT02R behaviour. Raw motion is slower than the low-latency firmware.",
+      "docPageId": "findings",
+      "docAnchorId": "rt02r-stock-restore",
       "publicDefault": false
     },
     {
@@ -82,6 +88,8 @@
       "minBatteryPercent": 20,
       "gateText": "RT02R RECOVERY",
       "patchSummary": "Recovery image for RT02R rings that still connect but need a known-good firmware.",
+      "docPageId": "findings",
+      "docAnchorId": "rt02r-recovery-firmware",
       "publicDefault": false
     }
   ]

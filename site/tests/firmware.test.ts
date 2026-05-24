@@ -35,6 +35,8 @@ describe("firmware manifest", () => {
     for (const entry of manifest.firmware) {
       expect(entry.role === "recommended" || entry.role === "stock" || entry.role === "recovery").toBe(true);
       expect(entry.fileName).toMatch(/^[a-z0-9-]+\.bin$/);
+      expect(entry.docPageId).toBe("findings");
+      expect(entry.docAnchorId).toMatch(/^[a-z0-9-]+$/);
     }
   });
 });

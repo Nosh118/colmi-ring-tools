@@ -27,6 +27,11 @@ const markdownRenderer = new Marked({
     html({ text }) {
       return escapeHtml(text);
     },
+    heading({ tokens, depth }) {
+      const label = this.parser.parseInline(tokens);
+      const id = slugify(tokens.map((token) => token.raw ?? "").join(" "));
+      return `<h${depth} id="${id}">${label}</h${depth}>`;
+    },
     link({ href, title, tokens }) {
       const label = this.parser.parseInline(tokens);
       const titleAttribute = title ? ` title="${escapeHtml(title)}"` : "";
@@ -61,6 +66,16 @@ console.log(`Rendered ${pages.length} docs.`);
 
 function renderMarkdown(markdown) {
   return markdownRenderer.parse(markdown);
+}
+
+function slugify(value) {
+  return (
+    value
+      .toLowerCase()
+      .replace(/`/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "section"
+  );
 }
 
 function escapeHtml(value) {

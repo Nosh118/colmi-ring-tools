@@ -73,6 +73,14 @@ const ui = {
   firmwareText: byId<HTMLElement>("firmwareText"),
   batteryText: byId<HTMLElement>("batteryText"),
   rateText: byId<HTMLElement>("rateText"),
+  bluetoothSupportText: byId<HTMLElement>("bluetoothSupportText"),
+  bluetoothSupportMeta: byId<HTMLElement>("bluetoothSupportMeta"),
+  midiSupportText: byId<HTMLElement>("midiSupportText"),
+  midiSupportMeta: byId<HTMLElement>("midiSupportMeta"),
+  secureContextText: byId<HTMLElement>("secureContextText"),
+  secureContextMeta: byId<HTMLElement>("secureContextMeta"),
+  pickerFilterText: byId<HTMLElement>("pickerFilterText"),
+  pickerFilterMeta: byId<HTMLElement>("pickerFilterMeta"),
   tabs: [...document.querySelectorAll<HTMLButtonElement>(".tab-button")],
   panels: [...document.querySelectorAll<HTMLElement>(".tool-panel")],
   refreshFirmwareButton: byId<HTMLButtonElement>("refreshFirmwareButton"),
@@ -130,6 +138,7 @@ const ui = {
   extraSensorList: byId<HTMLElement>("extraSensorList"),
   otherPacketList: byId<HTMLElement>("otherPacketList"),
   packetLog: byId<HTMLTextAreaElement>("packetLog"),
+  copyDiagButton: byId<HTMLButtonElement>("copyDiagButton"),
   exportDiagButton: byId<HTMLButtonElement>("exportDiagButton"),
   clearDiagButton: byId<HTMLButtonElement>("clearDiagButton"),
   docTabs: byId<HTMLElement>("docTabs"),
@@ -140,6 +149,7 @@ void initialise();
 
 async function initialise(): Promise<void> {
   wireUi();
+  renderCapabilities();
   renderMidiChannels();
   renderDocTabs();
   renderSensorReadings();
@@ -167,6 +177,13 @@ function wireUi(): void {
   ui.firmwareSelect.addEventListener("change", () => selectFirmware(ui.firmwareSelect.value));
   ui.customFirmwareInput.addEventListener("change", () => void loadCustomFirmware());
   ui.customInitTypeSelect.addEventListener("change", () => void loadCustomFirmware());
+  ui.firmwareDetails.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) return;
+    const docButton = target.closest<HTMLButtonElement>("[data-doc-page]");
+    if (!docButton) return;
+    openDocReference(docButton.dataset.docPage ?? "findings", docButton.dataset.docAnchor);
+  });
   ui.loadFirmwareButton.addEventListener("click", () => void loadSelectedFirmware());
   ui.flashButton.addEventListener("click", () => void guardedFlashLoadedFirmware());
   ui.midiRefreshButton.addEventListener("click", () => void refreshMidiOutputs());
@@ -182,6 +199,7 @@ function wireUi(): void {
   ui.heartRateButton.addEventListener("click", () => void startSensor(HEART_RATE_KIND, "heart rate"));
   ui.bloodOxygenButton.addEventListener("click", () => void startSensor(BLOOD_OXYGEN_KIND, "blood oxygen"));
   ui.stopSensorsButton.addEventListener("click", () => void stopSensors());
+  ui.copyDiagButton.addEventListener("click", () => void copyDiagnosticsSummary());
   ui.exportDiagButton.addEventListener("click", exportDiagnostics);
   ui.clearDiagButton.addEventListener("click", () => {
     packetLog.length = 0;
@@ -265,7 +283,8 @@ function selectFirmware(id: string): void {
       <dt>Status</dt><dd>${escapeHtml(compatibility)}</dd>
       <dt>Battery</dt><dd>${selectedFirmware.minBatteryPercent}% minimum</dd>
       <dt>Notes</dt><dd>${escapeHtml(selectedFirmware.patchSummary)}</dd>
-    </dl>`;
+    </dl>
+    ${renderFirmwareDocAction(selectedFirmware)}`;
 }
 
 async function loadSelectedFirmware(): Promise<void> {
@@ -555,6 +574,16 @@ function selectDoc(page: DocPage): void {
   ui.docContent.innerHTML = docHtml(page);
 }
 
+function openDocReference(pageId: string, anchorId: string | undefined): void {
+  const page = DOC_PAGES.find((entry) => entry.id === pageId) ?? DOC_PAGES[0];
+  selectTab("docs");
+  selectDoc(page);
+  if (!anchorId) return;
+  window.requestAnimationFrame(() => {
+    document.getElementById(anchorId)?.scrollIntoView({ block: "start" });
+  });
+}
+
 function renderMidiValues(values: MidiValues): void {
   ui.xMeter.value = values.x;
   ui.yMeter.value = values.y;
@@ -584,6 +613,20 @@ function renderConnection(): void {
   ui.firmwareText.textContent = deviceInfo.firmware ?? "Unknown";
   ui.batteryText.textContent = batteryInfo ? `${batteryInfo.level}%${batteryInfo.charging ? " charging" : ""}` : "Unknown";
   ui.compatibilityPanel.innerHTML = renderCompatibility();
+}
+
+function renderCapabilities(): void {
+  const capabilities = browserCapabilities();
+  ui.bluetoothSupportText.textContent = capabilities.webBluetooth ? "Available" : "Unavailable";
+  ui.bluetoothSupportMeta.textContent = capabilities.webBluetooth
+    ? "Chrome or Edge can connect to the ring."
+    : "Use a Web Bluetooth browser.";
+  ui.midiSupportText.textContent = capabilities.webMidi ? "Available" : "Unavailable";
+  ui.midiSupportMeta.textContent = capabilities.webMidi ? "MIDI outputs can be selected." : "MIDI controls will be limited.";
+  ui.secureContextText.textContent = capabilities.secureContext ? "Secure" : "Blocked";
+  ui.secureContextMeta.textContent = capabilities.secureContext ? "Bluetooth is allowed." : "Open the HTTPS site.";
+  ui.pickerFilterText.textContent = "Contains R02";
+  ui.pickerFilterMeta.textContent = "Stock rings often start as COLMI R02.";
 }
 
 function renderSensorReadings(): void {
@@ -676,6 +719,14 @@ function renderCompatibility(): string {
     .join("")}</ul>`;
 }
 
+function renderFirmwareDocAction(entry: FirmwareEntry): string {
+  if (!entry.docPageId) return "";
+  const anchor = entry.docAnchorId ? ` data-doc-anchor="${escapeHtml(entry.docAnchorId)}"` : "";
+  return `<div class="firmware-actions"><button type="button" data-doc-page="${escapeHtml(
+    entry.docPageId,
+  )}"${anchor}>Open patch notes</button></div>`;
+}
+
 function selectTab(tabId: string): void {
   ui.tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.tab === tabId));
   ui.panels.forEach((panel) => panel.classList.toggle("active", panel.id === `${tabId}Panel`));
@@ -705,8 +756,63 @@ function renderPacketLog(): void {
 }
 
 function exportDiagnostics(): void {
-  const payload = {
+  const payload = diagnosticsPayload();
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `colmi-ring-diagnostics-${Date.now()}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+async function copyDiagnosticsSummary(): Promise<void> {
+  const summary = diagnosticsSummaryText();
+  try {
+    if (!navigator.clipboard?.writeText) throw new Error("Clipboard is not available.");
+    await navigator.clipboard.writeText(summary);
+    setStatus("Diagnostics summary copied.");
+  } catch (error) {
+    appendPacketLog("diagnostics-summary", summary);
+    setStatus(`${errorMessage(error)} Summary added to the packet log.`);
+  }
+}
+
+function diagnosticsPayload() {
+  return {
     exportedAt: new Date().toISOString(),
+    page: {
+      url: window.location.href,
+      userAgent: navigator.userAgent,
+      capabilities: browserCapabilities(),
+    },
+    manifest: manifest
+      ? {
+          generatedAt: manifest.generatedAt,
+          defaultDfuSegmentBytes: manifest.defaultDfuSegmentBytes,
+          firmwareCount: manifest.firmware.length,
+        }
+      : null,
+    selectedFirmware: selectedFirmware
+      ? {
+          id: selectedFirmware.id,
+          label: selectedFirmware.label,
+          fileName: selectedFirmware.fileName,
+          sha256: selectedFirmware.sha256,
+          initType: selectedFirmware.initType,
+          minBatteryPercent: selectedFirmware.minBatteryPercent,
+        }
+      : null,
+    loadedFirmware: loadedFirmware
+      ? {
+          source: loadedFirmware.source,
+          label: loadedFirmware.label,
+          fileName: loadedFirmware.fileName,
+          byteLength: loadedFirmware.bytes.byteLength,
+          initType: loadedFirmware.initType,
+          minBatteryPercent: loadedFirmware.minBatteryPercent,
+        }
+      : null,
     connectionInfo,
     deviceInfo,
     batteryInfo,
@@ -717,13 +823,41 @@ function exportDiagnostics(): void {
     otherPackets,
     packetLog,
   };
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `colmi-ring-diagnostics-${Date.now()}.json`;
-  link.click();
-  URL.revokeObjectURL(url);
+}
+
+function diagnosticsSummaryText(): string {
+  const capabilities = browserCapabilities();
+  const sensors = [...latestSensorReadings.values()].map((reading) => `${reading.label}: ${formatSensorValue(reading)}`);
+  return [
+    "Colmi Ring Tools diagnostics",
+    `Time: ${new Date().toISOString()}`,
+    `URL: ${window.location.href}`,
+    `Browser: ${navigator.userAgent}`,
+    `Secure context: ${yesNo(capabilities.secureContext)}`,
+    `Web Bluetooth: ${yesNo(capabilities.webBluetooth)}`,
+    `Web MIDI: ${yesNo(capabilities.webMidi)}`,
+    `Device name: ${connectionInfo?.deviceName ?? "None"}`,
+    `Hardware: ${deviceInfo.hardware ?? "Unknown"}`,
+    `Firmware: ${deviceInfo.firmware ?? "Unknown"}`,
+    `Battery: ${batteryInfo ? `${batteryInfo.level}%${batteryInfo.charging ? " charging" : ""}` : "Unknown"}`,
+    `DFU ready: ${connectionInfo ? yesNo(connectionInfo.dfuReady) : "Unknown"}`,
+    `Selected firmware: ${selectedFirmware?.label ?? "None"}`,
+    `Loaded firmware: ${loadedFirmware ? `${loadedFirmware.label} (${loadedFirmware.fileName})` : "None"}`,
+    `Raw enabled: ${yesNo(rawEnabled)}`,
+    `Raw rate: ${ui.rateText.textContent ?? "Unknown"}`,
+    `Latest acceleration: ${latestReading ? `${formatG(latestReading.g.x)}, ${formatG(latestReading.g.y)}, ${formatG(latestReading.g.z)}` : "No data"}`,
+    `Sensors: ${sensors.length > 0 ? sensors.join("; ") : "No data"}`,
+    `Recent status: ${ui.statusText.textContent ?? "Unknown"}`,
+  ].join("\n");
+}
+
+function browserCapabilities() {
+  return {
+    secureContext: window.isSecureContext,
+    webBluetooth: Boolean(navigator.bluetooth),
+    webMidi: Boolean(navigator.requestMIDIAccess),
+    clipboard: Boolean(navigator.clipboard?.writeText),
+  };
 }
 
 function setStatus(message: string): void {
@@ -755,4 +889,8 @@ function escapeHtml(value: string): string {
         return "&#39;";
     }
   });
+}
+
+function yesNo(value: boolean): string {
+  return value ? "Yes" : "No";
 }

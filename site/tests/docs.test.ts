@@ -33,6 +33,12 @@ describe("docs rendering", () => {
     expect(html).toContain("<code>RT02CR_3.12.07_260514</code>");
   });
 
+  it("adds stable heading ids for in-app doc links", () => {
+    const html = generatedDoc("findings");
+    expect(html).toContain('<h2 id="rt02r-low-latency-firmware">');
+    expect(html).toContain('<h2 id="rt02cr-low-latency-firmware">');
+  });
+
   it("includes public research notes without private artefact paths", () => {
     const html = generatedDoc("research");
     expect(html).toContain("Firmware Container");

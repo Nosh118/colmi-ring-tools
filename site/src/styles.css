@@ -110,6 +110,32 @@ button:disabled {
   overflow-wrap: anywhere;
 }
 
+.capability-strip {
+  display: grid;
+  gap: 1px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  padding: 0 clamp(16px, 4vw, 40px);
+}
+
+.capability-strip div {
+  background: #eef6f3;
+  min-height: 82px;
+  padding: 12px;
+}
+
+.capability-strip span,
+.capability-strip small {
+  color: #526170;
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.capability-strip strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
 .tabs {
   display: flex;
   gap: 8px;
@@ -184,6 +210,10 @@ textarea {
   border-radius: 8px;
   margin: 12px 0;
   padding: 14px;
+}
+
+.firmware-actions {
+  margin-top: 12px;
 }
 
 dl {
@@ -338,6 +368,7 @@ meter {
 .doc-content h1,
 .doc-content h2,
 .doc-content h3 {
+  scroll-margin-top: 18px;
   margin: 22px 0 8px;
 }
 

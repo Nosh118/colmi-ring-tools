@@ -18,6 +18,8 @@ export interface FirmwareEntry {
   minBatteryPercent: number;
   gateText: string;
   patchSummary: string;
+  docPageId?: string;
+  docAnchorId?: string;
   publicDefault: boolean;
 }
 
@@ -88,6 +90,12 @@ export function validateManifest(manifest: FirmwareManifest): void {
     if (entry.initType !== 1 && entry.initType !== 4) throw new Error(`${entry.id} has invalid init type.`);
     if (!/^[a-z0-9-]+\.bin$/.test(entry.fileName)) {
       throw new Error(`${entry.id} must use a user-facing firmware filename.`);
+    }
+    if (entry.docPageId && !/^[a-z0-9-]+$/.test(entry.docPageId)) {
+      throw new Error(`${entry.id} has invalid docPageId.`);
+    }
+    if (entry.docAnchorId && !/^[a-z0-9-]+$/.test(entry.docAnchorId)) {
+      throw new Error(`${entry.id} has invalid docAnchorId.`);
     }
   }
 }
