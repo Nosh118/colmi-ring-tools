@@ -330,6 +330,8 @@ meter {
   border: 1px solid #d9dee7;
   border-radius: 8px;
   max-width: 880px;
+  min-width: 0;
+  overflow-wrap: anywhere;
   padding: 20px;
 }
 
@@ -351,10 +353,38 @@ meter {
   margin: 0 0 14px;
 }
 
+.doc-content ul,
+.doc-content ol {
+  padding-left: 1.35rem;
+}
+
+.doc-content li {
+  margin-bottom: 6px;
+}
+
 .doc-content code {
   background: #eef2f6;
   border-radius: 4px;
+  overflow-wrap: anywhere;
   padding: 1px 4px;
+  word-break: break-word;
+}
+
+.doc-content pre {
+  background: #eef2f6;
+  border-radius: 6px;
+  margin: 0 0 14px;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 12px;
+  white-space: pre-wrap;
+}
+
+.doc-content pre code {
+  background: transparent;
+  display: block;
+  padding: 0;
+  white-space: inherit;
 }
 
 @media (max-width: 700px) {
@@ -366,5 +396,9 @@ meter {
 
   .tabs {
     overflow-x: auto;
+  }
+
+  .doc-content {
+    padding: 14px;
   }
 }
