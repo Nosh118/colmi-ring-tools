@@ -12,7 +12,7 @@ import {
   sha256Hex,
   verifyFirmwareBytes,
 } from "./dfu";
-import { DOC_PAGES, fetchDocHtml, type DocPage } from "./docs";
+import { DOC_PAGES, docHtml, type DocPage } from "./docs";
 import {
   compatibilityReason,
   loadFirmwareManifest,
@@ -155,7 +155,7 @@ async function initialise(): Promise<void> {
   });
   await refreshFirmwareCatalogue();
   await refreshMidiOutputs();
-  await selectDoc(DOC_PAGES[0]);
+  selectDoc(DOC_PAGES[0]);
   setStatus("Ready");
 }
 
@@ -543,21 +543,16 @@ function renderDocTabs(): void {
     button.type = "button";
     button.textContent = page.title;
     button.dataset.doc = page.id;
-    button.addEventListener("click", () => void selectDoc(page));
+    button.addEventListener("click", () => selectDoc(page));
     ui.docTabs.append(button);
   }
 }
 
-async function selectDoc(page: DocPage): Promise<void> {
+function selectDoc(page: DocPage): void {
   ui.docTabs
     .querySelectorAll<HTMLButtonElement>("button")
     .forEach((button) => button.classList.toggle("active", button.dataset.doc === page.id));
-  ui.docContent.innerHTML = "<p>Loading...</p>";
-  try {
-    ui.docContent.innerHTML = await fetchDocHtml(page);
-  } catch (error) {
-    ui.docContent.textContent = errorMessage(error);
-  }
+  ui.docContent.innerHTML = docHtml(page);
 }
 
 function renderMidiValues(values: MidiValues): void {

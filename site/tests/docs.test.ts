@@ -1,21 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
-import { DOC_PAGES } from "../src/docs";
+import { DOC_PAGES, docHtml } from "../src/docs";
 
 describe("docs rendering", () => {
-  it("keeps public docs backed by generated html and markdown files", () => {
-    expect(DOC_PAGES.map((page) => page.path)).toEqual([
-      "./docs/flashing.html",
-      "./docs/midi.html",
-      "./docs/findings.html",
-      "./docs/acknowledgements.html",
-    ]);
-    expect(DOC_PAGES.map((page) => page.sourcePath)).toEqual([
-      "./docs/flashing.md",
-      "./docs/midi.md",
-      "./docs/findings.md",
-      "./docs/acknowledgements.md",
-    ]);
+  it("keeps docs available as generated html in the app bundle", () => {
+    expect(DOC_PAGES.map((page) => page.id)).toEqual(["flashing", "midi", "findings", "acknowledgements"]);
+    expect(DOC_PAGES.every((page) => page.html.includes("<h1"))).toBe(true);
   });
 
   it("renders wrapped firmware list items at build time", () => {
@@ -38,5 +27,7 @@ describe("docs rendering", () => {
 });
 
 function generatedDoc(name: string): string {
-  return readFileSync(new URL(`../public/docs/${name}.html`, import.meta.url), "utf8");
+  const page = DOC_PAGES.find((entry) => entry.id === name);
+  if (!page) throw new Error(`Missing generated doc ${name}`);
+  return docHtml(page);
 }
