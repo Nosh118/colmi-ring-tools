@@ -10,3 +10,5 @@
 - Added sanitised packet examples for battery, raw motion, realtime sensors,
   quiet sensors, DFU start, and stock OTA metadata.
 - Added a release checklist for firmware catalogue and GitHub Pages updates.
+- Added GitHub issue templates for flashing failures, MIDI issues, and
+  compatibility reports.

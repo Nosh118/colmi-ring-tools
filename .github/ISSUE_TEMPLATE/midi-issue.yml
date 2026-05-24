@@ -1,0 +1,48 @@
+name: MIDI or motion issue
+description: Report raw motion, MIDI mapping, sensor noise, or rate problems.
+title: "MIDI issue: "
+labels: ["midi"]
+body:
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+    validations:
+      required: true
+  - type: input
+    id: midi-target
+    attributes:
+      label: MIDI target
+      description: DAW, synth, virtual MIDI port, or app receiving MIDI.
+    validations:
+      required: false
+  - type: input
+    id: ring-info
+    attributes:
+      label: Ring hardware and firmware
+      description: Copy from Device Information in the site.
+    validations:
+      required: true
+  - type: textarea
+    id: behaviour
+    attributes:
+      label: Behaviour
+      description: Describe the raw rate, MIDI values, mapping problem, or sensor issue.
+    validations:
+      required: true
+  - type: textarea
+    id: settings
+    attributes:
+      label: MIDI settings
+      description: Channel, CC numbers, smoothing, deadband, rate limit, and invert settings.
+      render: text
+    validations:
+      required: false
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics summary or packet log
+      description: Paste the copied diagnostics summary or relevant packet log lines.
+      render: text
+    validations:
+      required: false

@@ -30,3 +30,5 @@ npm test
 npm run validate:release
 npm run build
 ```
+
+For firmware or site releases, also use `docs/release-checklist.md`.

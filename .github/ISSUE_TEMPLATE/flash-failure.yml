@@ -1,0 +1,65 @@
+name: Flashing failure
+description: Report a firmware load, verification, transfer, or reconnect problem.
+title: "Flash failure: "
+labels: ["flashing"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Export JSON or copy the diagnostics summary before reconnecting if possible.
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      description: For example, Chrome on macOS, Edge on Windows, or ChromeOS.
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Ring name shown by the site
+      description: Use the displayed name, not a Bluetooth address.
+    validations:
+      required: true
+  - type: input
+    id: device-info
+    attributes:
+      label: Device Information
+      description: Hardware, firmware, battery, and charging state shown by the site.
+    validations:
+      required: true
+  - type: dropdown
+    id: firmware-source
+    attributes:
+      label: Firmware source
+      options:
+        - Catalogue RT02R low-latency
+        - Catalogue RT02CR low-latency
+        - Catalogue RT02R stock restore
+        - Catalogue RT02R recovery
+        - Custom upload
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: What happened
+      description: Include the stage where it stopped and any status text.
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics summary or JSON
+      description: Paste the copied summary, or attach the exported JSON after creating the issue.
+      render: text
+    validations:
+      required: false
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Preflight checks
+      options:
+        - label: The ring was charged enough to start flashing.
+        - label: Other phone/watch/ring apps were closed.
+        - label: The page stayed open until the flasher stopped or completed.
