@@ -8,10 +8,6 @@ The site includes:
 - a motion-to-MIDI controller
 - basic ring diagnostics and JSON export
 
-This project builds on public Colmi/RF03 research and browser MIDI/BLE examples
-from others. See [Acknowledgements](docs/acknowledgements.md) for links and
-credits.
-
 Live site: https://nosh118.github.io/colmi-ring-tools/
 
 ## Supported Rings
@@ -42,6 +38,20 @@ flash.
 
 The catalogue firmware uses a 20% battery minimum. A transfer is usually short,
 but do not flash a ring that is nearly empty.
+
+## Acknowledgements
+
+This project builds on public Colmi/RF03 research, BLE notes, and MIDI examples
+from:
+
+- Aaron Christophel / atc1441 for [ATC_RF03_Ring](https://github.com/atc1441/ATC_RF03_Ring), including RF03/BlueX hardware notes, OTA firmware context, and prior work on faster raw motion data.
+- Floyd Steinberg / mrfloydst for [smartringmidi](https://github.com/mrfloydst/smartringmidi), which provided a clear browser-based MIDI controller example for the R02.
+- Puxtril for [colmi-docs](https://github.com/Puxtril/colmi-docs), documenting Colmi BLE commands and response shapes.
+- Wesley Ellis / tahnok for [colmi_r02_client](https://github.com/tahnok/colmi_r02_client), including practical BLE client code and packet-level documentation for R02-family rings.
+
+Those projects remain under their own licences and terms. This repository does
+not vendor their code or assets; they are credited here as references that
+helped make this tool possible.
 
 ## Local Development
 
