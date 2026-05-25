@@ -22,7 +22,16 @@ const CMD_HEART_RATE_LOG_SETTINGS = 0x16;
 const CMD_BLOOD_OXYGEN_SETTINGS = 0x2c;
 const DATA_ACTION_START = 0x01;
 const DATA_ACTION_STOP = 0x04;
-const SUPPORTED_RING_NAME_PREFIXES = ["R02", "COLMI R02", "Colmi R02", "TR-R02"];
+export const SUPPORTED_RING_NAME_PREFIXES = [
+  "R02",
+  "r02",
+  "COLMI R02",
+  "Colmi R02",
+  "colmi R02",
+  "colmi r02",
+  "TR-R02",
+  "TR_R02",
+];
 
 export interface RingPacket {
   bytes: Uint8Array;

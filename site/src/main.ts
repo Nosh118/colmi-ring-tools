@@ -158,10 +158,10 @@ async function initialise(): Promise<void> {
   ble.onPacket(handlePacket);
   ble.onWrite((event) => appendPacketLog("write", `${event.label}: ${event.packetHex} (${event.status})`));
   ble.onDisconnect(() => {
-    rawEnabled = false;
-    connectionInfo = null;
+    clearRingState();
     setStatus("Disconnected");
     renderConnection();
+    renderFirmwareOptions();
   });
   await refreshFirmwareCatalogue();
   await refreshMidiOutputs();
@@ -629,8 +629,8 @@ function renderCapabilities(): void {
   ui.midiSupportMeta.textContent = capabilities.webMidi ? "MIDI outputs can be selected." : "MIDI controls will be limited.";
   ui.secureContextText.textContent = capabilities.secureContext ? "Secure" : "Blocked";
   ui.secureContextMeta.textContent = capabilities.secureContext ? "Bluetooth is allowed." : "Open the HTTPS site.";
-  ui.pickerFilterText.textContent = "Contains R02";
-  ui.pickerFilterMeta.textContent = "Stock rings often start as COLMI R02.";
+  ui.pickerFilterText.textContent = "R02 prefixes";
+  ui.pickerFilterMeta.textContent = "Examples include R02 and Colmi R02.";
 }
 
 function renderSensorReadings(): void {
@@ -714,7 +714,7 @@ function renderCompatibility(): string {
   const compatible = manifest.firmware.filter((entry) => profileAcceptsDevice(entry, deviceInfo));
   if (!deviceInfo.hardware) return "Connect a ring to see compatible firmware.";
   if (compatible.length === 0) {
-    return `<strong>No matching firmware for this ring state.</strong><p>${escapeHtml(
+    return `<strong>No catalogue firmware is marked compatible with this ring state.</strong><p>${escapeHtml(
       JSON.stringify(deviceInfo),
     )}</p>`;
   }
@@ -866,6 +866,13 @@ function browserCapabilities() {
 
 function setStatus(message: string): void {
   ui.statusText.textContent = message;
+}
+
+function clearRingState(): void {
+  rawEnabled = false;
+  connectionInfo = null;
+  deviceInfo = {};
+  batteryInfo = null;
 }
 
 function byId<T extends HTMLElement>(id: string): T {

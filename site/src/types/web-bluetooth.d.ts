@@ -9,7 +9,6 @@ interface Bluetooth extends EventTarget {
 
 interface RequestDeviceOptions {
   filters?: BluetoothLEScanFilter[];
-  acceptAllDevices?: boolean;
   optionalServices?: BluetoothServiceUUID[];
 }
 

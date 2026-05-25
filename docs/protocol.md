@@ -18,9 +18,10 @@ The site talks to the ring through two BLE paths:
 | DFU write characteristic | `de5bf72a-d711-4e47-af26-65e3012a5dc7` |
 | Device Information service | `0000180a-0000-1000-8000-00805f9b34fb` |
 
-The browser requests devices whose advertised name contains `R02` by using
-Bluetooth name-prefix filters for common `R02` names. After selection, the app
-still rejects names that do not contain `R02`.
+The browser picker uses Web Bluetooth prefix filters for common R02 names,
+including `R02`, `COLMI R02`, `Colmi R02`, and `TR-R02`. Web Bluetooth does not
+support a true "contains `R02`" picker filter, so after selection the app still
+checks that the advertised name contains `R02` before connecting.
 
 ## Normal Command Packets
 

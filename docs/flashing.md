@@ -19,7 +19,10 @@ the hosted site provides.
 - `rt02r-stock-restore.bin`: stock RT02R restore image.
 - `rt02r-recovery.bin`: RT02R recovery image for rings that still connect.
 
-Catalogue files are checked against the manifest before flashing.
+The dropdown shows all catalogue firmware so a supported ring is not hidden by
+over-strict filtering. Read the Status field after choosing a file; the flasher
+blocks catalogue firmware that is not marked compatible with the connected ring
+state. Catalogue files are also checked against the manifest before flashing.
 
 ## Custom Firmware Uploads
 
