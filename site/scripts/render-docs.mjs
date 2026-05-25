@@ -13,6 +13,9 @@ const DOCS = [
   { source: "flashing.md", output: "flashing", title: "Flashing" },
   { source: "midi.md", output: "midi", title: "MIDI" },
   { source: "findings.md", output: "findings", title: "Firmware" },
+  { source: "protocol.md", output: "protocol", title: "Protocol" },
+  { source: "research.md", output: "research", title: "Research" },
+  { source: "examples.md", output: "examples", title: "Examples" },
   { source: "acknowledgements.md", output: "acknowledgements", title: "Thanks" },
 ];
 
@@ -23,6 +26,11 @@ const markdownRenderer = new Marked({
   renderer: {
     html({ text }) {
       return escapeHtml(text);
+    },
+    heading({ tokens, depth }) {
+      const label = this.parser.parseInline(tokens);
+      const id = slugify(tokens.map((token) => token.raw ?? "").join(" "));
+      return `<h${depth} id="${id}">${label}</h${depth}>`;
     },
     link({ href, title, tokens }) {
       const label = this.parser.parseInline(tokens);
@@ -58,6 +66,16 @@ console.log(`Rendered ${pages.length} docs.`);
 
 function renderMarkdown(markdown) {
   return markdownRenderer.parse(markdown);
+}
+
+function slugify(value) {
+  return (
+    value
+      .toLowerCase()
+      .replace(/`/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "section"
+  );
 }
 
 function escapeHtml(value) {

@@ -27,6 +27,29 @@
         <div><span>Raw Rate</span><strong id="rateText">0 Hz</strong></div>
       </section>
 
+      <section class="capability-strip" aria-label="browser capabilities">
+        <div>
+          <span>Bluetooth</span>
+          <strong id="bluetoothSupportText">Checking</strong>
+          <small id="bluetoothSupportMeta">Web Bluetooth</small>
+        </div>
+        <div>
+          <span>MIDI</span>
+          <strong id="midiSupportText">Checking</strong>
+          <small id="midiSupportMeta">Web MIDI</small>
+        </div>
+        <div>
+          <span>Context</span>
+          <strong id="secureContextText">Checking</strong>
+          <small id="secureContextMeta">HTTPS or localhost</small>
+        </div>
+        <div>
+          <span>Picker</span>
+          <strong id="pickerFilterText">R02 names</strong>
+          <small id="pickerFilterMeta">Examples include COLMI R02 and R02_...</small>
+        </div>
+      </section>
+
       <nav class="tabs" aria-label="tools">
         <button class="tab-button active" type="button" data-tab="flash">Flash</button>
         <button class="tab-button" type="button" data-tab="midi">MIDI</button>
@@ -158,6 +181,7 @@
             <button id="heartRateButton" type="button" disabled>Start Heart Rate</button>
             <button id="bloodOxygenButton" type="button" disabled>Start Blood Oxygen</button>
             <button id="stopSensorsButton" type="button" disabled>Stop Sensors</button>
+            <button id="copyDiagButton" type="button">Copy Summary</button>
             <button id="exportDiagButton" type="button">Export JSON</button>
             <button id="clearDiagButton" type="button">Clear</button>
           </div>

@@ -1,0 +1,45 @@
+name: Compatibility report
+description: Share a tested ring, browser, firmware, or OS combination.
+title: "Compatibility: "
+labels: ["compatibility"]
+body:
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+    validations:
+      required: true
+  - type: input
+    id: advertised-name
+    attributes:
+      label: Advertised ring name
+      description: Use the name shown by the Bluetooth picker or site.
+    validations:
+      required: false
+  - type: input
+    id: device-info
+    attributes:
+      label: Device Information
+      description: Hardware, firmware, battery, and charging state shown by the site.
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options:
+        - Connected and flashed successfully
+        - Connected but did not flash
+        - Did not appear in the picker
+        - MIDI worked
+        - MIDI did not work
+        - Diagnostics only
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Include anything unusual about browser permissions, reconnects, raw rate, or sensor data.
+    validations:
+      required: false

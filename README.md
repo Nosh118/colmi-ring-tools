@@ -30,6 +30,16 @@ The public catalogue contains four files:
 You can also upload your own `.bin` file in the flasher. Uploaded files are not
 checked against the public catalogue, so only flash files you trust and understand.
 
+## Documentation
+
+The `docs/` folder and the hosted Docs tab include:
+
+- flashing and MIDI setup guides
+- byte-level firmware patch notes
+- BLE command and DFU protocol notes
+- OTA firmware discovery notes
+- small sanitised packet examples
+
 ## Safety
 
 Firmware flashing can brick a ring. Charge the ring first, keep it close to the
@@ -41,10 +51,10 @@ but do not flash a ring that is nearly empty.
 
 ## Acknowledgements
 
-This project builds on public Colmi/RF03 research, BLE notes, and MIDI examples
+This project builds on public Colmi smart-ring research, BLE notes, and MIDI examples
 from:
 
-- Aaron Christophel / atc1441 for [ATC_RF03_Ring](https://github.com/atc1441/ATC_RF03_Ring), including RF03/BlueX hardware notes, OTA firmware context, and prior work on faster raw motion data.
+- Aaron Christophel / atc1441 for public smart-ring hardware notes, OTA firmware context, and prior work on faster raw motion data.
 - Floyd Steinberg / mrfloydst for [smartringmidi](https://github.com/mrfloydst/smartringmidi), which provided a clear browser-based MIDI controller example for the R02.
 - Puxtril for [colmi-docs](https://github.com/Puxtril/colmi-docs), documenting Colmi BLE commands and response shapes.
 - Wesley Ellis / tahnok for [colmi_r02_client](https://github.com/tahnok/colmi_r02_client), including practical BLE client code and packet-level documentation for R02-family rings.

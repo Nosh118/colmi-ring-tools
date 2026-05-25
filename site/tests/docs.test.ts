@@ -3,7 +3,15 @@ import { DOC_PAGES, docHtml } from "../src/docs";
 
 describe("docs rendering", () => {
   it("keeps docs available as generated html in the app bundle", () => {
-    expect(DOC_PAGES.map((page) => page.id)).toEqual(["flashing", "midi", "findings", "acknowledgements"]);
+    expect(DOC_PAGES.map((page) => page.id)).toEqual([
+      "flashing",
+      "midi",
+      "findings",
+      "protocol",
+      "research",
+      "examples",
+      "acknowledgements",
+    ]);
     expect(DOC_PAGES.every((page) => page.html.includes("<h1"))).toBe(true);
   });
 
@@ -16,13 +24,26 @@ describe("docs rendering", () => {
 
   it("renders external links safely at build time", () => {
     const html = generatedDoc("acknowledgements");
-    expect(html).toContain('href="https://github.com/atc1441/ATC_RF03_Ring"');
+    expect(html).toContain('href="https://github.com/mrfloydst/smartringmidi"');
     expect(html).toContain('target="_blank" rel="noopener noreferrer"');
   });
 
   it("keeps long firmware strings inside code elements", () => {
     const html = generatedDoc("findings");
     expect(html).toContain("<code>RT02CR_3.12.07_260514</code>");
+  });
+
+  it("adds stable heading ids for in-app doc links", () => {
+    const html = generatedDoc("findings");
+    expect(html).toContain('<h2 id="rt02r-low-latency-firmware">');
+    expect(html).toContain('<h2 id="rt02cr-low-latency-firmware">');
+  });
+
+  it("includes public research notes without unpublished artefact paths", () => {
+    const html = generatedDoc("research");
+    expect(html).toContain("Firmware Container");
+    expect(html).not.toContain("research/tmp");
+    expect(html).not.toContain("agent-handoff");
   });
 });
 
