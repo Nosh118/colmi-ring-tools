@@ -23,6 +23,7 @@ describe("firmware manifest", () => {
     expect(profileAcceptsDevice(rt02r!, { hardware: "RT02R12_V3.1", firmware: "RT02R12_3.12.55_260513" })).toBe(
       true,
     );
+    expect(profileAcceptsDevice(rt02r!, { hardware: "RT02R_V3.1", firmware: "RT02R_3.11.00_250611" })).toBe(true);
     expect(profileAcceptsDevice(rt02cr!, { hardware: "RT02R12_V3.1", firmware: "RT02R12_3.12.06_260514" })).toBe(
       true,
     );

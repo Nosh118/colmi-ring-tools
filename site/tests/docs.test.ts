@@ -24,7 +24,7 @@ describe("docs rendering", () => {
 
   it("renders external links safely at build time", () => {
     const html = generatedDoc("acknowledgements");
-    expect(html).toContain('href="https://github.com/atc1441/ATC_RF03_Ring"');
+    expect(html).toContain('href="https://github.com/mrfloydst/smartringmidi"');
     expect(html).toContain('target="_blank" rel="noopener noreferrer"');
   });
 
@@ -39,7 +39,7 @@ describe("docs rendering", () => {
     expect(html).toContain('<h2 id="rt02cr-low-latency-firmware">');
   });
 
-  it("includes public research notes without private artefact paths", () => {
+  it("includes public research notes without unpublished artefact paths", () => {
     const html = generatedDoc("research");
     expect(html).toContain("Firmware Container");
     expect(html).not.toContain("research/tmp");

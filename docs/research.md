@@ -6,8 +6,8 @@ people who want to reproduce the work, audit the firmware changes, or build
 compatible tools.
 
 This repository publishes derived findings and stable firmware artefacts. It
-does not include decompiled APK output, proprietary app assets, private lab
-logs, large raw captures, or device-specific identifiers.
+does not include decompiled APK output, proprietary app assets, unpublished lab
+notes, large raw captures, or device-specific identifiers.
 
 ## Device Scope
 

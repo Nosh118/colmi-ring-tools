@@ -250,14 +250,18 @@ async function refreshFirmwareCatalogue(): Promise<void> {
 function renderFirmwareOptions(): void {
   ui.firmwareSelect.replaceChildren();
   if (!manifest) return;
+  const entries = manifest.firmware;
   const compatible = manifest.firmware.filter((entry) => profileAcceptsDevice(entry, deviceInfo));
-  const entries = compatible.length > 0 ? compatible : manifest.firmware;
   for (const entry of entries) {
     const option = new Option(`${entry.publicDefault ? "* " : ""}${entry.label}`, entry.id);
-    option.disabled = Boolean(deviceInfo.hardware && !profileAcceptsDevice(entry, deviceInfo));
     ui.firmwareSelect.append(option);
   }
-  const preferred = compatible.find((entry) => entry.publicDefault) ?? compatible[0] ?? entries[0] ?? null;
+  const preferred =
+    compatible.find((entry) => entry.publicDefault) ??
+    compatible[0] ??
+    entries.find((entry) => entry.publicDefault) ??
+    entries[0] ??
+    null;
   if (preferred) {
     ui.firmwareSelect.value = preferred.id;
     selectFirmware(preferred.id);
