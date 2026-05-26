@@ -21,6 +21,7 @@
   --warning-soft: #fdf3e6;
   --success: #2b7a5a;
   --success-soft: #e8f4ed;
+  --range-track: #c5ccd6;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --radius-sm: 6px;
   --radius: 10px;
@@ -50,6 +51,7 @@
   --warning-soft: #2e2315;
   --success: #5cc78a;
   --success-soft: #1a2e22;
+  --range-track: #3d4652;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
@@ -76,6 +78,7 @@
     --warning-soft: #2e2315;
     --success: #5cc78a;
     --success-soft: #1a2e22;
+    --range-track: #3d4652;
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
   }
 }
@@ -194,11 +197,18 @@ input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
   width: 100%;
-  height: 6px;
-  background: var(--bg-inset);
-  border-radius: 3px;
+  height: 38px;
+  background: transparent;
   padding: 0;
   border: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  background: var(--range-track);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -209,6 +219,14 @@ input[type="range"]::-webkit-slider-thumb {
   border-radius: 50%;
   background: var(--accent);
   cursor: pointer;
+  margin-top: -5px;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  background: var(--range-track);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
 }
 
 input[type="range"]::-moz-range-thumb {
