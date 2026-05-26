@@ -504,6 +504,9 @@ async function startSensor(kind: number, label: string): Promise<void> {
 async function stopSensors(): Promise<void> {
   try {
     const writes = await ble.quietOpticalSensors();
+    latestSensorReadings.clear();
+    sensorReceivedAt.clear();
+    renderSensorReadings();
     setStatus(`Sensor streams stopped (${writes} writes)`);
   } catch (error) {
     setStatus(errorMessage(error));
