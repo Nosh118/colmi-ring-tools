@@ -619,6 +619,7 @@ function renderConnection(): void {
   ui.hardwareText.textContent = deviceInfo.hardware ?? "Unknown";
   ui.firmwareText.textContent = deviceInfo.firmware ?? "Unknown";
   ui.batteryText.textContent = batteryInfo ? `${batteryInfo.level}%${batteryInfo.charging ? " charging" : ""}` : "Unknown";
+  ui.rateText.textContent = connected ? ui.rateText.textContent : "0 Hz";
   ui.compatibilityPanel.innerHTML = renderCompatibility();
 }
 
