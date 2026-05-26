@@ -3,6 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Browser tools for Colmi / QRing RT02R and RT02CR smart rings — firmware flashing, MIDI control, and diagnostics." />
+    <meta name="theme-color" content="#176e61" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#111318" media="(prefers-color-scheme: dark)" />
     <title>Colmi Ring Tools</title>
   </head>
   <body>
@@ -13,18 +16,36 @@
           <h1>Ring Tools</h1>
         </div>
         <div class="connection-actions">
-          <button id="connectButton" class="primary-button" type="button">Connect Ring</button>
-          <button id="disconnectButton" type="button" disabled>Disconnect</button>
+          <button id="connectButton" class="btn btn-primary" type="button">Connect Ring</button>
+          <button id="disconnectButton" class="btn" type="button" disabled>Disconnect</button>
         </div>
       </header>
 
       <section class="status-strip" aria-label="ring status">
-        <div><span>Status</span><strong id="statusText">Idle</strong></div>
-        <div><span>Device</span><strong id="deviceText">None</strong></div>
-        <div><span>Hardware</span><strong id="hardwareText">Unknown</strong></div>
-        <div><span>Firmware</span><strong id="firmwareText">Unknown</strong></div>
-        <div><span>Battery</span><strong id="batteryText">Unknown</strong></div>
-        <div><span>Raw Rate</span><strong id="rateText">0 Hz</strong></div>
+        <div>
+          <span>Status</span>
+          <strong id="statusText" aria-live="polite">Idle</strong>
+        </div>
+        <div>
+          <span>Device</span>
+          <strong id="deviceText">None</strong>
+        </div>
+        <div>
+          <span>Hardware</span>
+          <strong id="hardwareText">Unknown</strong>
+        </div>
+        <div>
+          <span>Firmware</span>
+          <strong id="firmwareText">Unknown</strong>
+        </div>
+        <div>
+          <span>Battery</span>
+          <strong id="batteryText">Unknown</strong>
+        </div>
+        <div>
+          <span>Raw Rate</span>
+          <strong id="rateText">0 Hz</strong>
+        </div>
       </section>
 
       <section class="capability-strip" aria-label="browser capabilities">
@@ -50,143 +71,185 @@
         </div>
       </section>
 
-      <nav class="tabs" aria-label="tools">
-        <button class="tab-button active" type="button" data-tab="flash">Flash</button>
-        <button class="tab-button" type="button" data-tab="midi">MIDI</button>
-        <button class="tab-button" type="button" data-tab="diagnostics">Diagnostics</button>
-        <button class="tab-button" type="button" data-tab="docs">Docs</button>
+      <nav class="tabs" role="tablist" aria-label="tools">
+        <button class="tab-button active" role="tab" type="button" data-tab="flash" aria-selected="true">Flash</button>
+        <button class="tab-button" role="tab" type="button" data-tab="midi" aria-selected="false">MIDI</button>
+        <button class="tab-button" role="tab" type="button" data-tab="diagnostics" aria-selected="false">Diagnostics</button>
+        <button class="tab-button" role="tab" type="button" data-tab="docs" aria-selected="false">Docs</button>
       </nav>
 
-      <section id="flashPanel" class="tool-panel active">
+      <section id="flashPanel" class="tool-panel active" role="tabpanel" aria-labelledby="tab-flash">
         <div class="panel-heading">
           <div>
             <p class="eyebrow">Firmware</p>
             <h2>Flasher</h2>
           </div>
-          <button id="refreshFirmwareButton" type="button">Refresh Catalogue</button>
+          <button id="refreshFirmwareButton" class="btn btn-ghost" type="button">Refresh Catalogue</button>
         </div>
 
-        <div class="flash-grid">
-          <label>
-            Catalogue firmware
-            <select id="firmwareSelect"></select>
-          </label>
-          <label>
-            Custom firmware
-            <input id="customFirmwareInput" type="file" accept=".bin,application/octet-stream" />
-          </label>
-          <label>
-            Custom mode
-            <select id="customInitTypeSelect">
-              <option value="4">Normal</option>
-              <option value="1">Recovery</option>
-            </select>
-          </label>
-          <label>
-            Confirmation
-            <input id="confirmInput" type="text" autocomplete="off" placeholder="Required text appears here" />
-          </label>
-          <button id="loadFirmwareButton" type="button">Load Catalogue Firmware</button>
-          <button id="flashButton" class="danger-button" type="button" disabled>Start Flash</button>
+        <div class="banner banner-warning" role="note">
+          <strong>Flashing can brick your ring.</strong> Charge the ring first, keep it close to the computer, close other apps connected to it, and do not refresh the page during a flash. Use the catalogue firmware for the safest path.
         </div>
+
+        <fieldset>
+          <legend>Firmware Selection</legend>
+          <div class="flash-grid">
+            <label>
+              Catalogue firmware
+              <select id="firmwareSelect" class="select"></select>
+            </label>
+            <label>
+              Custom firmware
+              <input id="customFirmwareInput" class="input" type="file" accept=".bin,application/octet-stream" />
+            </label>
+            <label>
+              Custom mode
+              <select id="customInitTypeSelect" class="select">
+                <option value="4">Normal</option>
+                <option value="1">Recovery</option>
+              </select>
+            </label>
+          </div>
+          <button id="loadFirmwareButton" class="btn" type="button">Load Catalogue Firmware</button>
+        </fieldset>
 
         <div id="firmwareDetails" class="details-panel"></div>
+
+        <fieldset>
+          <legend>Flash Action</legend>
+          <label>
+            Confirmation
+            <input
+              id="confirmInput"
+              class="input"
+              type="text"
+              autocomplete="off"
+              placeholder="Required text appears here"
+              aria-describedby="flashWarning"
+            />
+          </label>
+          <p id="flashWarning" class="banner banner-danger" style="margin-top: 12px;">
+            Type the confirmation text exactly to unlock the flash button. Custom firmware requires typing <strong>CUSTOM FIRMWARE</strong>.
+          </p>
+          <button id="flashButton" class="btn btn-danger" type="button" disabled style="margin-top: 12px;">Start Flash</button>
+        </fieldset>
+
         <ol id="flashStages" class="stage-list" aria-label="flash stages"></ol>
-        <textarea id="flashLog" class="log-box" readonly aria-label="flash log"></textarea>
+
+        <div class="card" style="padding-top: 12px;">
+          <div class="log-header">
+            <span>Flash Log</span>
+          </div>
+          <textarea id="flashLog" class="log-box" readonly aria-label="flash log"></textarea>
+        </div>
       </section>
 
-      <section id="midiPanel" class="tool-panel">
+      <section id="midiPanel" class="tool-panel" role="tabpanel" aria-labelledby="tab-midi">
         <div class="panel-heading">
           <div>
             <p class="eyebrow">Controller</p>
             <h2>Motion to MIDI</h2>
           </div>
           <div class="button-row">
-            <button id="midiRefreshButton" type="button">Refresh MIDI</button>
-            <button id="midiPanicButton" type="button">All Notes Off</button>
+            <button id="midiRefreshButton" class="btn" type="button">Refresh MIDI</button>
+            <button id="midiPanicButton" class="btn btn-ghost" type="button">All Notes Off</button>
           </div>
         </div>
 
-        <div class="midi-grid">
-          <label>
-            MIDI output
-            <select id="midiOutputSelect"></select>
-          </label>
-          <label>
-            Channel
-            <select id="midiChannelSelect"></select>
-          </label>
-          <div class="cc-field">
-            <label for="xCcInput">X CC</label>
-            <div>
-              <input id="xCcInput" type="number" min="0" max="127" value="1" />
-              <button id="xCcSendButton" type="button">Send</button>
+        <div class="card">
+          <div class="midi-grid">
+            <label>
+              MIDI output
+              <select id="midiOutputSelect" class="select"></select>
+            </label>
+            <label>
+              Channel
+              <select id="midiChannelSelect" class="select"></select>
+            </label>
+            <div class="cc-field">
+              <label for="xCcInput">X CC</label>
+              <div>
+                <input id="xCcInput" class="input" type="number" min="0" max="127" value="1" />
+                <button id="xCcSendButton" class="btn" type="button">Send</button>
+              </div>
             </div>
-          </div>
-          <div class="cc-field">
-            <label for="yCcInput">Y CC</label>
-            <div>
-              <input id="yCcInput" type="number" min="0" max="127" value="74" />
-              <button id="yCcSendButton" type="button">Send</button>
+            <div class="cc-field">
+              <label for="yCcInput">Y CC</label>
+              <div>
+                <input id="yCcInput" class="input" type="number" min="0" max="127" value="74" />
+                <button id="yCcSendButton" class="btn" type="button">Send</button>
+              </div>
             </div>
-          </div>
-          <div class="cc-field">
-            <label for="zCcInput">Z CC</label>
-            <div>
-              <input id="zCcInput" type="number" min="0" max="127" value="11" />
-              <button id="zCcSendButton" type="button">Send</button>
+            <div class="cc-field">
+              <label for="zCcInput">Z CC</label>
+              <div>
+                <input id="zCcInput" class="input" type="number" min="0" max="127" value="11" />
+                <button id="zCcSendButton" class="btn" type="button">Send</button>
+              </div>
             </div>
+            <label>
+              Motion rate limit
+              <input id="midiRateInput" class="input" type="number" min="5" max="100" value="25" />
+            </label>
+            <label>
+              Smoothing
+              <input id="smoothingInput" class="input" type="range" min="0" max="0.95" step="0.05" value="0.35" />
+            </label>
+            <label>
+              Deadband
+              <input id="deadbandInput" class="input" type="number" min="0" max="16" value="1" />
+            </label>
           </div>
-          <label>
-            Motion rate limit
-            <input id="midiRateInput" type="number" min="5" max="100" value="25" />
-          </label>
-          <label>
-            Smoothing
-            <input id="smoothingInput" type="range" min="0" max="0.95" step="0.05" value="0.35" />
-          </label>
-          <label>
-            Deadband
-            <input id="deadbandInput" type="number" min="0" max="16" value="1" />
-          </label>
+
+          <div class="toggle-row" style="margin-top: var(--space-md);">
+            <label><input id="invertXInput" type="checkbox" /> Invert X</label>
+            <label><input id="invertYInput" type="checkbox" /> Invert Y</label>
+            <label><input id="invertZInput" type="checkbox" /> Invert Z</label>
+          </div>
         </div>
 
-        <div class="toggle-row">
-          <label><input id="invertXInput" type="checkbox" /> Invert X</label>
-          <label><input id="invertYInput" type="checkbox" /> Invert Y</label>
-          <label><input id="invertZInput" type="checkbox" /> Invert Z</label>
-        </div>
-
-        <div class="control-row">
-          <button id="rawOnButton" type="button" disabled>Raw On</button>
-          <button id="rawOffButton" type="button" disabled>Raw Off</button>
-          <button id="quietSensorsButton" type="button" disabled>Quiet Sensors</button>
-          <button id="healthOffButton" type="button" disabled>Health Logs Off</button>
+        <div class="card" style="margin-top: var(--space-lg);">
+          <div class="control-row">
+            <button id="rawOnButton" class="btn btn-primary" type="button" disabled>Raw On</button>
+            <button id="rawOffButton" class="btn" type="button" disabled>Raw Off</button>
+            <button id="quietSensorsButton" class="btn" type="button" disabled>Quiet Sensors</button>
+            <button id="healthOffButton" class="btn" type="button" disabled>Health Logs Off</button>
+          </div>
         </div>
 
         <div class="axis-grid">
-          <div><span>X</span><meter id="xMeter" min="0" max="127" value="64"></meter><strong id="xMidiText">64</strong></div>
-          <div><span>Y</span><meter id="yMeter" min="0" max="127" value="64"></meter><strong id="yMidiText">64</strong></div>
-          <div><span>Z</span><meter id="zMeter" min="0" max="127" value="64"></meter><strong id="zMidiText">64</strong></div>
+          <div>
+            <span>X</span>
+            <meter id="xMeter" min="0" max="127" value="64"></meter>
+            <strong id="xMidiText">64</strong>
+          </div>
+          <div>
+            <span>Y</span>
+            <meter id="yMeter" min="0" max="127" value="64"></meter>
+            <strong id="yMidiText">64</strong>
+          </div>
+          <div>
+            <span>Z</span>
+            <meter id="zMeter" min="0" max="127" value="64"></meter>
+            <strong id="zMidiText">64</strong>
+          </div>
         </div>
       </section>
 
-      <section id="diagnosticsPanel" class="tool-panel">
+      <section id="diagnosticsPanel" class="tool-panel" role="tabpanel" aria-labelledby="tab-diagnostics">
         <div class="panel-heading">
           <div>
             <p class="eyebrow">Ring</p>
             <h2>Diagnostics</h2>
           </div>
           <div class="button-row">
-            <button id="heartRateButton" type="button" disabled>Start Heart Rate</button>
-            <button id="bloodOxygenButton" type="button" disabled>Start Blood Oxygen</button>
-            <button id="stopSensorsButton" type="button" disabled>Stop Sensors</button>
-            <button id="copyDiagButton" type="button">Copy Summary</button>
-            <button id="exportDiagButton" type="button">Export JSON</button>
-            <button id="clearDiagButton" type="button">Clear</button>
+            <button id="heartRateButton" class="btn btn-primary" type="button" disabled>Start Heart Rate</button>
+            <button id="bloodOxygenButton" class="btn btn-primary" type="button" disabled>Start Blood Oxygen</button>
+            <button id="stopSensorsButton" class="btn" type="button" disabled>Stop Sensors</button>
           </div>
         </div>
-        <div class="details-panel sensor-panel">
+
+        <div class="card sensor-panel">
           <div class="sensor-grid" aria-label="live sensor readings">
             <div>
               <span>Heart rate</span>
@@ -224,11 +287,23 @@
           <div id="extraSensorList" class="sensor-list" aria-label="extra sensor readings"></div>
           <div id="otherPacketList" class="sensor-list" aria-label="other ring packets"></div>
         </div>
+
         <div id="compatibilityPanel" class="details-panel"></div>
-        <textarea id="packetLog" class="log-box" readonly aria-label="packet log"></textarea>
+
+        <div class="card" style="padding-top: 12px;">
+          <div class="button-row" style="margin-bottom: var(--space-sm);">
+            <button id="copyDiagButton" class="btn" type="button">Copy Summary</button>
+            <button id="exportDiagButton" class="btn" type="button">Export JSON</button>
+            <button id="clearDiagButton" class="btn btn-ghost" type="button">Clear</button>
+          </div>
+          <div class="log-header">
+            <span>Packet Log</span>
+          </div>
+          <textarea id="packetLog" class="log-box" readonly aria-label="packet log"></textarea>
+        </div>
       </section>
 
-      <section id="docsPanel" class="tool-panel">
+      <section id="docsPanel" class="tool-panel" role="tabpanel" aria-labelledby="tab-docs">
         <div class="panel-heading">
           <div>
             <p class="eyebrow">Docs</p>

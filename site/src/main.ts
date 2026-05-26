@@ -726,13 +726,17 @@ function renderCompatibility(): string {
 function renderFirmwareDocAction(entry: FirmwareEntry): string {
   if (!entry.docPageId) return "";
   const anchor = entry.docAnchorId ? ` data-doc-anchor="${escapeHtml(entry.docAnchorId)}"` : "";
-  return `<div class="firmware-actions"><button type="button" data-doc-page="${escapeHtml(
+  return `<div class="firmware-actions"><button class="btn btn-ghost" type="button" data-doc-page="${escapeHtml(
     entry.docPageId,
   )}"${anchor}>Open patch notes</button></div>`;
 }
 
 function selectTab(tabId: string): void {
-  ui.tabs.forEach((tab) => tab.classList.toggle("active", tab.dataset.tab === tabId));
+  ui.tabs.forEach((tab) => {
+    const active = tab.dataset.tab === tabId;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
   ui.panels.forEach((panel) => panel.classList.toggle("active", panel.id === `${tabId}Panel`));
 }
 
