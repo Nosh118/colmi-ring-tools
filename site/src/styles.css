@@ -402,6 +402,12 @@ textarea {
   gap: var(--space-sm);
 }
 
+.toggle-row label {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
 /* Forms */
 label {
   color: var(--text-secondary);
