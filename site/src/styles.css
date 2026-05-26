@@ -33,6 +33,7 @@
 }
 
 [data-theme="dark"] {
+  color-scheme: dark;
   --bg: #0f1115;
   --bg-elevated: #181a20;
   --bg-inset: #121419;
@@ -51,6 +52,10 @@
   --success-soft: #1a2e22;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {

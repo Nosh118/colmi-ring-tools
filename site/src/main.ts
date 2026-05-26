@@ -872,10 +872,14 @@ function browserCapabilities() {
 }
 
 function initTheme(): void {
-  const stored = localStorage.getItem("theme");
+  let stored: string | null = null;
+  try {
+    stored = localStorage.getItem("theme");
+  } catch {
+    // Safari private mode or storage disabled.
+  }
   if (stored === "dark" || stored === "light") {
-    document.documentElement.dataset.theme = stored;
-    ui.themeToggle.textContent = stored === "dark" ? "☀️" : "🌙";
+    applyTheme(stored);
     return;
   }
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -886,10 +890,21 @@ function toggleTheme(): void {
   const current = document.documentElement.dataset.theme;
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
   const isDark = current ? current === "dark" : prefersDark;
-  const next = isDark ? "light" : "dark";
-  document.documentElement.dataset.theme = next;
-  localStorage.setItem("theme", next);
-  ui.themeToggle.textContent = next === "dark" ? "☀️" : "🌙";
+  applyTheme(isDark ? "light" : "dark");
+}
+
+function applyTheme(theme: "dark" | "light"): void {
+  document.documentElement.dataset.theme = theme;
+  ui.themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
+  try {
+    localStorage.setItem("theme", theme);
+  } catch {
+    // Safari private mode or storage disabled.
+  }
+  const meta = document.querySelector<HTMLMetaElement>("meta[name='theme-color']");
+  if (meta) {
+    meta.content = theme === "dark" ? "#111318" : "#176e61";
+  }
 }
 
 function setStatus(message: string): void {
