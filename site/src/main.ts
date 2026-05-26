@@ -905,9 +905,10 @@ function applyTheme(theme: "dark" | "light"): void {
   } catch {
     // Safari private mode or storage disabled.
   }
-  const meta = document.querySelector<HTMLMetaElement>("meta[name='theme-color']");
-  if (meta) {
-    meta.content = theme === "dark" ? "#111318" : "#176e61";
+  const content = theme === "dark" ? "#111318" : "#176e61";
+  for (const meta of document.querySelectorAll<HTMLMetaElement>("meta[name='theme-color']")) {
+    meta.content = content;
+    meta.removeAttribute("media");
   }
 }
 
