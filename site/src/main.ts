@@ -175,7 +175,10 @@ function wireUi(): void {
   ui.connectButton.addEventListener("click", () => void connectRing());
   ui.disconnectButton.addEventListener("click", () => void disconnectRing());
   ui.themeToggle.addEventListener("click", () => toggleTheme());
-  ui.tabs.forEach((tab) => tab.addEventListener("click", () => selectTab(tab.dataset.tab ?? "flash")));
+  ui.tabs.forEach((tab) => {
+    tab.addEventListener("click", () => selectTab(tab.dataset.tab ?? "flash"));
+    tab.addEventListener("keydown", handleTabKeydown);
+  });
   ui.refreshFirmwareButton.addEventListener("click", () => void refreshFirmwareCatalogue());
   ui.firmwareSelect.addEventListener("change", () => selectFirmware(ui.firmwareSelect.value));
   ui.customFirmwareInput.addEventListener("change", () => void loadCustomFirmware());
@@ -743,8 +746,39 @@ function selectTab(tabId: string): void {
     const active = tab.dataset.tab === tabId;
     tab.classList.toggle("active", active);
     tab.setAttribute("aria-selected", String(active));
+    tab.tabIndex = active ? 0 : -1;
   });
   ui.panels.forEach((panel) => panel.classList.toggle("active", panel.id === `${tabId}Panel`));
+}
+
+function handleTabKeydown(event: KeyboardEvent): void {
+  const current = event.currentTarget;
+  if (!(current instanceof HTMLButtonElement)) return;
+  const currentIndex = ui.tabs.indexOf(current);
+  if (currentIndex < 0) return;
+
+  let nextIndex: number | null = null;
+  switch (event.key) {
+    case "ArrowLeft":
+      nextIndex = (currentIndex + ui.tabs.length - 1) % ui.tabs.length;
+      break;
+    case "ArrowRight":
+      nextIndex = (currentIndex + 1) % ui.tabs.length;
+      break;
+    case "Home":
+      nextIndex = 0;
+      break;
+    case "End":
+      nextIndex = ui.tabs.length - 1;
+      break;
+    default:
+      return;
+  }
+
+  event.preventDefault();
+  const nextTab = ui.tabs[nextIndex];
+  selectTab(nextTab.dataset.tab ?? "flash");
+  nextTab.focus();
 }
 
 function addStage(label: string, status: "pending" | "ok" | "fail"): void {

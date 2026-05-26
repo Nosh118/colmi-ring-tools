@@ -73,10 +73,10 @@
       </section>
 
       <nav class="tabs" role="tablist" aria-label="tools">
-        <button id="tab-flash" class="tab-button active" role="tab" type="button" data-tab="flash" aria-selected="true" aria-controls="flashPanel">Flash</button>
-        <button id="tab-midi" class="tab-button" role="tab" type="button" data-tab="midi" aria-selected="false" aria-controls="midiPanel">MIDI</button>
-        <button id="tab-diagnostics" class="tab-button" role="tab" type="button" data-tab="diagnostics" aria-selected="false" aria-controls="diagnosticsPanel">Diagnostics</button>
-        <button id="tab-docs" class="tab-button" role="tab" type="button" data-tab="docs" aria-selected="false" aria-controls="docsPanel">Docs</button>
+        <button id="tab-flash" class="tab-button active" role="tab" type="button" data-tab="flash" aria-selected="true" aria-controls="flashPanel" tabindex="0">Flash</button>
+        <button id="tab-midi" class="tab-button" role="tab" type="button" data-tab="midi" aria-selected="false" aria-controls="midiPanel" tabindex="-1">MIDI</button>
+        <button id="tab-diagnostics" class="tab-button" role="tab" type="button" data-tab="diagnostics" aria-selected="false" aria-controls="diagnosticsPanel" tabindex="-1">Diagnostics</button>
+        <button id="tab-docs" class="tab-button" role="tab" type="button" data-tab="docs" aria-selected="false" aria-controls="docsPanel" tabindex="-1">Docs</button>
       </nav>
 
       <section id="flashPanel" class="tool-panel active" role="tabpanel" aria-labelledby="tab-flash">
