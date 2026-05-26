@@ -431,6 +431,11 @@ fieldset {
   margin: 0 0 var(--space-lg);
 }
 
+fieldset label + .banner,
+fieldset .banner + .btn {
+  margin-top: 12px;
+}
+
 legend {
   font-size: 13px;
   font-weight: 700;
@@ -439,6 +444,11 @@ legend {
   letter-spacing: 0.03em;
   padding: 0 6px;
 }
+
+/* Spacing utilities */
+.midi-controls { margin-top: var(--space-lg); }
+.diag-actions { margin-bottom: var(--space-sm); }
+.log-card { padding-top: 12px; }
 
 /* Flash grid */
 .flash-grid,

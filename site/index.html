@@ -129,15 +129,15 @@
               aria-describedby="flashWarning"
             />
           </label>
-          <p id="flashWarning" class="banner banner-danger" style="margin-top: 12px;">
+          <p id="flashWarning" class="banner banner-danger">
             Type the confirmation text exactly to unlock the flash button. Custom firmware requires typing <strong>CUSTOM FIRMWARE</strong>.
           </p>
-          <button id="flashButton" class="btn btn-danger" type="button" disabled style="margin-top: 12px;">Start Flash</button>
+          <button id="flashButton" class="btn btn-danger" type="button" disabled>Start Flash</button>
         </fieldset>
 
         <ol id="flashStages" class="stage-list" aria-label="flash stages"></ol>
 
-        <div class="card" style="padding-top: 12px;">
+        <div class="card log-card">
           <div class="log-header">
             <span>Flash Log</span>
           </div>
@@ -202,14 +202,14 @@
             </label>
           </div>
 
-          <div class="toggle-row" style="margin-top: var(--space-md);">
+          <div class="toggle-row">
             <label><input id="invertXInput" type="checkbox" /> Invert X</label>
             <label><input id="invertYInput" type="checkbox" /> Invert Y</label>
             <label><input id="invertZInput" type="checkbox" /> Invert Z</label>
           </div>
         </div>
 
-        <div class="card" style="margin-top: var(--space-lg);">
+        <div class="card midi-controls">
           <div class="control-row">
             <button id="rawOnButton" class="btn btn-primary" type="button" disabled>Raw On</button>
             <button id="rawOffButton" class="btn" type="button" disabled>Raw Off</button>
@@ -291,8 +291,8 @@
 
         <div id="compatibilityPanel" class="details-panel"></div>
 
-        <div class="card" style="padding-top: 12px;">
-          <div class="button-row" style="margin-bottom: var(--space-sm);">
+        <div class="card log-card">
+          <div class="button-row diag-actions">
             <button id="copyDiagButton" class="btn" type="button">Copy Summary</button>
             <button id="exportDiagButton" class="btn" type="button">Export JSON</button>
             <button id="clearDiagButton" class="btn btn-ghost" type="button">Clear</button>
