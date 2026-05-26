@@ -43,7 +43,7 @@ export function checksum16(bytes: ArrayLike<number>): number {
 }
 
 export function bytesToHex(bytes: ArrayLike<number>): string {
-  return [...Array.from({ length: bytes.length }, (_, index) => bytes[index])]
+  return Array.from({ length: bytes.length }, (_, index) => bytes[index])
     .map((byte) => byte.toString(16).padStart(2, "0"))
     .join("");
 }
@@ -140,7 +140,7 @@ export function parseDfuResponse(bytes: Uint8Array | number[]): ParsedDfuRespons
   };
 }
 
-export function firmwareStats(bytes: Uint8Array): { size: number; crc16: string; checksum16: string; sha256?: string } {
+export function firmwareStats(bytes: Uint8Array): { size: number; crc16: string; checksum16: string } {
   return {
     size: bytes.byteLength,
     crc16: `0x${crc16Modbus(bytes).toString(16).padStart(4, "0")}`,
