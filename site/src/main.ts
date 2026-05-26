@@ -67,6 +67,7 @@ const otherPackets: Array<{ at: string; command: string; hex: string }> = [];
 const ui = {
   connectButton: byId<HTMLButtonElement>("connectButton"),
   disconnectButton: byId<HTMLButtonElement>("disconnectButton"),
+  themeToggle: byId<HTMLButtonElement>("themeToggle"),
   statusText: byId<HTMLElement>("statusText"),
   deviceText: byId<HTMLElement>("deviceText"),
   hardwareText: byId<HTMLElement>("hardwareText"),
@@ -149,6 +150,7 @@ void initialise();
 
 async function initialise(): Promise<void> {
   wireUi();
+  initTheme();
   renderCapabilities();
   renderMidiChannels();
   renderDocTabs();
@@ -172,6 +174,7 @@ async function initialise(): Promise<void> {
 function wireUi(): void {
   ui.connectButton.addEventListener("click", () => void connectRing());
   ui.disconnectButton.addEventListener("click", () => void disconnectRing());
+  ui.themeToggle.addEventListener("click", () => toggleTheme());
   ui.tabs.forEach((tab) => tab.addEventListener("click", () => selectTab(tab.dataset.tab ?? "flash")));
   ui.refreshFirmwareButton.addEventListener("click", () => void refreshFirmwareCatalogue());
   ui.firmwareSelect.addEventListener("change", () => selectFirmware(ui.firmwareSelect.value));
@@ -866,6 +869,27 @@ function browserCapabilities() {
     webMidi: Boolean(navigator.requestMIDIAccess),
     clipboard: Boolean(navigator.clipboard?.writeText),
   };
+}
+
+function initTheme(): void {
+  const stored = localStorage.getItem("theme");
+  if (stored === "dark" || stored === "light") {
+    document.documentElement.dataset.theme = stored;
+    ui.themeToggle.textContent = stored === "dark" ? "☀️" : "🌙";
+    return;
+  }
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  ui.themeToggle.textContent = prefersDark ? "☀️" : "🌙";
+}
+
+function toggleTheme(): void {
+  const current = document.documentElement.dataset.theme;
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const isDark = current ? current === "dark" : prefersDark;
+  const next = isDark ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  localStorage.setItem("theme", next);
+  ui.themeToggle.textContent = next === "dark" ? "☀️" : "🌙";
 }
 
 function setStatus(message: string): void {
