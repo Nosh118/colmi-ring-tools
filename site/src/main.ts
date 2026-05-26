@@ -887,7 +887,7 @@ function initTheme(): void {
     return;
   }
   const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  ui.themeToggle.textContent = prefersDark ? "☀️" : "🌙";
+  setThemeButton(prefersDark ? "dark" : "light");
 }
 
 function toggleTheme(): void {
@@ -899,7 +899,7 @@ function toggleTheme(): void {
 
 function applyTheme(theme: "dark" | "light"): void {
   document.documentElement.dataset.theme = theme;
-  ui.themeToggle.textContent = theme === "dark" ? "☀️" : "🌙";
+  setThemeButton(theme);
   try {
     localStorage.setItem("theme", theme);
   } catch {
@@ -910,6 +910,12 @@ function applyTheme(theme: "dark" | "light"): void {
     meta.content = content;
     meta.removeAttribute("media");
   }
+}
+
+function setThemeButton(theme: "dark" | "light"): void {
+  ui.themeToggle.setAttribute("aria-label", theme === "dark" ? "Switch to light theme" : "Switch to dark theme");
+  const icon = ui.themeToggle.querySelector("[aria-hidden]");
+  if (icon) icon.textContent = theme === "dark" ? "☀️" : "🌙";
 }
 
 function setStatus(message: string): void {
