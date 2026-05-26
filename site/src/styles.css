@@ -178,14 +178,6 @@ textarea {
   box-shadow: var(--shadow-sm);
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-
 /* Warning / Info banners */
 .banner {
   border-radius: var(--radius-sm);
@@ -196,28 +188,15 @@ textarea {
 
 .banner-warning {
   background: var(--warning-soft);
-  border: 1px solid color-mix(in srgb, var(--warning) 20%, transparent);
+  border: 1px solid var(--border);
   color: var(--warning);
 }
 
 .banner-danger {
   background: var(--danger-soft);
-  border: 1px solid color-mix(in srgb, var(--danger) 20%, transparent);
+  border: 1px solid var(--border);
   color: var(--danger);
 }
-
-/* Status dot */
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--text-muted);
-  display: inline-block;
-}
-
-.status-dot.ok { background: var(--success); }
-.status-dot.fail { background: var(--danger); }
-.status-dot.warn { background: var(--warning); }
 
 /* Eyebrow label */
 .eyebrow {
