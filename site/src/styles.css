@@ -197,7 +197,6 @@ input[type="range"] {
   height: 6px;
   background: var(--bg-inset);
   border-radius: 3px;
-  outline: none;
   padding: 0;
   border: none;
 }
